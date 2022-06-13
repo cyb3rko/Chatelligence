@@ -32,7 +32,7 @@ import type { Message } from "./types/Message.type";
   }
 
   // TODO: parse special messages beginning with an U+200E
-  async function parseRawChat (raw: string): Message[] {
+  async function parseRawChat (raw: string): Promise<Message[]> {
     let parsedMessages = [];
     Array.from(raw.matchAll(rg_TimeAndName)).forEach((match) => {
       let m = match.at(0);
