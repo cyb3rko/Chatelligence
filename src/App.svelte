@@ -16,31 +16,9 @@
   fileReader.onload = (e) => {
     let result = e.target.result as string;
 
-    Array.from(result.matchAll(rg_TimeAndName)).forEach((match) => {
-      let m = match.at(0);
-      let time = m.match(r_Time).at(0);
-      time = time.substring(1, time.length - 1);
-      let sender = m.substring(time.length + 3, m.length - 2);
-
-      let lastMessage = messages[messages.length - 1];
-      if (lastMessage) {
-        lastMessage.length = lastMessage.length - 1;
-        messages[messages.length - 1].message = result.substring(
-          lastMessage.index + lastMessage.length + 1,
-          match.index
-        );
-      }
-
-      messages.push({ sender, time, index: match.index, length: m.length });
-    });
-
-    let lastMessage = messages[messages.length - 1];
-    messages[messages.length - 1].message = result.substring(lastMessage.index + lastMessage.length + 1);
-
-    console.log(messages);
-
-    analyze(messages).then((result) => {
-      console.log(result);
+    parseRawChat(result).then((parsed) => {
+      messages = parsed;
+      console.log(messages);
     });
   };
 
@@ -50,22 +28,31 @@
     }
   }
 
-  async function analyze(rawMessages: string[]) {
-    const messages = rawMessages.map((line) => {
-      let time;
-      try {
-        time = line.match(/\[(.*?)\]/).at(0);
-      } catch (error) {
-        //console.log(line, error);
+  // TODO: parse special messages beginning with an U+200E
+  async function parseRawChat (raw: string) {
+    let parsedMessages = [];
+    Array.from(raw.matchAll(rg_TimeAndName)).forEach((match) => {
+      let m = match.at(0);
+      let time = m.match(r_Time).at(0);
+      time = time.substring(1, time.length - 1);
+      let sender = m.substring(time.length + 3, m.length - 2);
+      let lastMessage = parsedMessages[parsedMessages.length - 1];
+      if (lastMessage) {
+        lastMessage.length = lastMessage.length - 1;
+        parsedMessages[parsedMessages.length - 1].message = raw.substring(
+          lastMessage.index + lastMessage.length + 1,
+          match.index
+        );
       }
-
-      return {
-        time,
-      };
+      parsedMessages.push({ sender, time, index: match.index, length: m.length });
     });
 
-    return new Set(messages);
+    let lastMessage = parsedMessages[parsedMessages.length - 1];
+    parsedMessages[parsedMessages.length - 1].message = raw.substring(lastMessage.index + lastMessage.length + 1);
+    return parsedMessages;
   }
+
+  async function analyze(messages) { }
 </script>
 
 <main>
