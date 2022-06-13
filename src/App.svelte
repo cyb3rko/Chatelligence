@@ -22,8 +22,12 @@
 
     parseRawChat(result).then((parsed) => {
       messages = parsed;
-      console.log(messages);
-    });
+      return messages;
+    })
+    .then(analyze)
+    .then((analyis) => {
+      console.log(analyis);
+    })
   };
 
   $: {
@@ -60,7 +64,75 @@
     }));
   }
 
-  async function analyze(messages: Message[]) { }
+  async function analyze(messages: Message[]) {
+    let sender = new Set(messages.map(m => m.sender));
+
+    /*
+     * SENDER STATS
+     */
+
+    let senderStats =  {};
+
+    sender.forEach((s) => {
+      senderStats[s] = {
+        messageCount: 0,
+        wordCount: 0,
+        messageHours: Array.from<number>({ length: 24 }).fill(0),
+      };
+    });
+
+    messages.forEach((m) => {
+      senderStats[m.sender].messageCount++;
+      senderStats[m.sender].wordCount += wordCount(m.message);
+      senderStats[m.sender].messageHours[m.time.getHours()]++;
+    });
+
+    let senderStatsArray = Object.keys(senderStats).map((s) => {
+      return {
+        sender: s,
+        messageCount: senderStats[s].messageCount,
+        wordCount: senderStats[s].wordCount,
+        wordsPerMessage: senderStats[s].wordCount / senderStats[s].messageCount,
+        messageHours: senderStats[s].messageHours,
+      };
+    });
+
+    /*
+     * AVERAGE STATS
+     */
+
+    let averageSenderStats = {
+      totalMessageCount: 0,
+      avgMessageCount: 0, // per user
+      totalWordCount: 0,
+      avgWordCount: 0, // per user
+      wordsPerMessage: 0,
+      totalMessageHours: Array.from<number>({ length: 24 }).fill(0), 
+      avgMessageHours: Array.from<number>({ length: 24 }).fill(0), // per user
+    };
+
+    senderStatsArray.forEach((s) => {
+      averageSenderStats.totalMessageCount += s.messageCount;
+      averageSenderStats.totalWordCount += s.wordCount;
+      s.messageHours.forEach((mh, i) => {
+        averageSenderStats.totalMessageHours[i] += mh;
+      });
+    });
+
+    averageSenderStats.avgMessageCount = averageSenderStats.totalMessageCount / senderStatsArray.length;
+    averageSenderStats.avgWordCount = averageSenderStats.totalWordCount / senderStatsArray.length;
+    averageSenderStats.totalMessageHours = averageSenderStats.totalMessageHours.map((mh) => mh / senderStatsArray.length);
+
+    return {
+      sender,
+      senderStats: senderStatsArray,
+      averageSenderStats,
+    };
+  }
+
+  const wordCount = (str: string) => {
+    return str.split(/\s+/).length;
+  }
 </script>
 
 <main>
