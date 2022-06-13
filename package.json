@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "chart.js": "^3.8.0",
+    "chartjs-plugin-deferred": "^2.0.0",
     "moment": "^2.29.3",
     "sirv-cli": "^2.0.0"
   }
