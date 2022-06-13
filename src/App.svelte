@@ -1,4 +1,7 @@
 <script lang="ts">
+import type { Message } from "./types/Message.type";
+
+
   let files;
 
   let messages = [];
@@ -29,7 +32,7 @@
   }
 
   // TODO: parse special messages beginning with an U+200E
-  async function parseRawChat (raw: string) {
+  async function parseRawChat (raw: string): Message[] {
     let parsedMessages = [];
     Array.from(raw.matchAll(rg_TimeAndName)).forEach((match) => {
       let m = match.at(0);
@@ -49,10 +52,14 @@
 
     let lastMessage = parsedMessages[parsedMessages.length - 1];
     parsedMessages[parsedMessages.length - 1].message = raw.substring(lastMessage.index + lastMessage.length + 1);
-    return parsedMessages;
+    return parsedMessages.map((m) => ({
+      sender: m.sender,
+      time: m.time,
+      message: m.message,
+    }));
   }
 
-  async function analyze(messages) { }
+  async function analyze(messages: Message[]) { }
 </script>
 
 <main>
