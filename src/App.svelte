@@ -1,5 +1,6 @@
 <script lang="ts">
-import type { Message } from "./types/Message.type";
+  import type { Message } from "./types/Message.type";
+  import moment from 'moment';
 
 
   let files;
@@ -54,7 +55,7 @@ import type { Message } from "./types/Message.type";
     parsedMessages[parsedMessages.length - 1].message = raw.substring(lastMessage.index + lastMessage.length + 1);
     return parsedMessages.map((m) => ({
       sender: m.sender,
-      time: m.time,
+      time: moment(m.time, "DD-MM-YYYY, HH:mm:ss").toDate(),
       message: m.message,
     }));
   }
