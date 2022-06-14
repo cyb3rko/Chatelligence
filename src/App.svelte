@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { Message } from "./types/Message.type";
-  import moment from 'moment';
-
+  import moment from "moment";
+  import BarChart from "./Charts/BarChart.svelte";
 
   let files;
 
   let messages = [];
+  let analyis;
 
   /**
    * regex to match the time stamp
@@ -20,14 +21,16 @@
   fileReader.onload = (e) => {
     let result = e.target.result as string;
 
-    parseRawChat(result).then((parsed) => {
-      messages = parsed;
-      return messages;
-    })
-    .then(analyze)
-    .then((analyis) => {
-      console.log(analyis);
-    })
+    parseRawChat(result)
+      .then((parsed) => {
+        messages = parsed;
+        return messages;
+      })
+      .then(analyze)
+      .then((result) => {
+        analyis = result;
+        console.log(analyis);
+      });
   };
 
   $: {
@@ -37,7 +40,7 @@
   }
 
   // TODO: parse special messages beginning with an U+200E
-  async function parseRawChat (raw: string): Promise<Message[]> {
+  async function parseRawChat(raw: string): Promise<Message[]> {
     let parsedMessages = [];
     Array.from(raw.matchAll(rg_TimeAndName)).forEach((match) => {
       let m = match.at(0);
@@ -52,11 +55,18 @@
           match.index
         );
       }
-      parsedMessages.push({ sender, time, index: match.index, length: m.length });
+      parsedMessages.push({
+        sender,
+        time,
+        index: match.index,
+        length: m.length,
+      });
     });
 
     let lastMessage = parsedMessages[parsedMessages.length - 1];
-    parsedMessages[parsedMessages.length - 1].message = raw.substring(lastMessage.index + lastMessage.length + 1);
+    parsedMessages[parsedMessages.length - 1].message = raw.substring(
+      lastMessage.index + lastMessage.length + 1
+    );
     return parsedMessages.map((m) => ({
       sender: m.sender,
       time: moment(m.time, "DD-MM-YYYY, HH:mm:ss").toDate(),
@@ -65,13 +75,13 @@
   }
 
   async function analyze(messages: Message[]) {
-    let sender = new Set(messages.map(m => m.sender));
+    let sender = new Set(messages.map((m) => m.sender));
 
     /*
      * SENDER STATS
      */
 
-    let senderStats =  {};
+    let senderStats = {};
 
     sender.forEach((s) => {
       senderStats[s] = {
@@ -93,7 +103,7 @@
         messageCount: senderStats[s].messageCount,
         wordCount: senderStats[s].wordCount,
         wordsPerMessage: senderStats[s].wordCount / senderStats[s].messageCount,
-        messageHours: senderStats[s].messageHours,
+        messageHours: senderStats[s].messageHours as number[],
       };
     });
 
@@ -107,7 +117,7 @@
       totalWordCount: 0,
       avgWordCount: 0, // per user
       wordsPerMessage: 0,
-      totalMessageHours: Array.from<number>({ length: 24 }).fill(0), 
+      totalMessageHours: Array.from<number>({ length: 24 }).fill(0),
       avgMessageHours: Array.from<number>({ length: 24 }).fill(0), // per user
     };
 
@@ -119,9 +129,14 @@
       });
     });
 
-    averageSenderStats.avgMessageCount = averageSenderStats.totalMessageCount / senderStatsArray.length;
-    averageSenderStats.avgWordCount = averageSenderStats.totalWordCount / senderStatsArray.length;
-    averageSenderStats.totalMessageHours = averageSenderStats.totalMessageHours.map((mh) => mh / senderStatsArray.length);
+    averageSenderStats.avgMessageCount =
+      averageSenderStats.totalMessageCount / senderStatsArray.length;
+    averageSenderStats.avgWordCount =
+      averageSenderStats.totalWordCount / senderStatsArray.length;
+    averageSenderStats.totalMessageHours =
+      averageSenderStats.totalMessageHours.map(
+        (mh) => mh / senderStatsArray.length
+      );
 
     return {
       sender,
@@ -132,6 +147,34 @@
 
   const wordCount = (str: string) => {
     return str.split(/\s+/).length;
+  };
+
+  let exampleData = {
+    labels: ["0 - 0:59", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23 - 23:59"],
+    datasets: [],
+  };
+
+  $: {
+    if (analyis?.senderStats) {
+      let x = exampleData;
+
+      x.datasets = [];
+
+      x.datasets.push(
+        ...analyis.senderStats.map((s) => {
+          return {
+            label: s.sender,
+            data: s.messageHours.map((v) => {
+              return v;
+            }),
+            backgroundColor:
+              "#" + Math.floor(Math.random() * 16777215).toString(16),
+          };
+        })
+      );
+        console.log(x);
+      exampleData = x;
+    }
   }
 </script>
 
@@ -149,6 +192,8 @@
     {:else}
       <input type="file" bind:files accept=".txt" />
     {/if}
+
+    <BarChart data={exampleData} />
   </div>
 </main>
 
