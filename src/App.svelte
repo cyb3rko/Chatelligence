@@ -1,11 +1,9 @@
 <script lang="ts">
-  import type { Message } from "./types/Message.type";
   import moment from "moment";
-  import BarChart from "./Charts/BarChart.svelte";
-  import BarMessageHoursChart from "./Charts/MessageHoursBarChart.svelte";
   import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
-  import { countWords } from "./untils/counting";
+  import type { Message } from "./types/Message.type";
   import { emptyArray } from "./untils/array";
+  import { countWords } from "./untils/counting";
 
   let files;
 

@@ -1,6 +1,5 @@
 <script lang="ts">
-import BarChart from "./BarChart.svelte";
-
+  import BarChart from "./BarChart.svelte";
 
   export let senderStats;
 
