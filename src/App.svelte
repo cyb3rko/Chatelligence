@@ -4,6 +4,7 @@
   import BarChart from "./Charts/BarChart.svelte";
 import BarMessageHoursChart from "./Charts/MessageHoursBarChart.svelte";
 import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
+import { countWords } from "./untils/counting";
 
   let files;
 
@@ -95,7 +96,7 @@ import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
 
     messages.forEach((m) => {
       senderStats[m.sender].messageCount++;
-      senderStats[m.sender].wordCount += wordCount(m.message);
+      senderStats[m.sender].wordCount += countWords(m.message);
       senderStats[m.sender].messageHours[m.time.getHours()]++;
     });
 
@@ -146,10 +147,6 @@ import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
       averageSenderStats,
     };
   }
-
-  const wordCount = (str: string) => {
-    return str.split(/\s+/).length;
-  };
 </script>
 
 <main>
