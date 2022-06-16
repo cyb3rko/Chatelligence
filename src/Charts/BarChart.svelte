@@ -11,15 +11,7 @@
       x: number;
       y: number;
     }[]
-  > = {
-    datasets: [
-      {
-        label: "Bar Dataset",
-        data: [],
-        backgroundColor: "rgb(255, 99, 132)",
-      },
-    ],
-  };
+  > = { datasets: [] };
 
   onMount(() => {
     Chart.register(...registerables);
