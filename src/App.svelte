@@ -1,7 +1,6 @@
 <script lang="ts">
-  import moment from "moment";
   import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
-import { WhatsAppChatParser } from "./parser/WhatsAppChatParser";
+  import { WhatsAppChatParser } from "./parser/WhatsAppChatParser";
   import type { Message } from "./types/Message.type";
   import { emptyArray } from "./untils/array";
   import { countWords } from "./untils/counting";
@@ -17,7 +16,8 @@ import { WhatsAppChatParser } from "./parser/WhatsAppChatParser";
   fileReader.onload = (e) => {
     let result = e.target.result as string;
 
-    parser.parseRaw(result)
+    parser
+      .parseRaw(result)
       .then((parsed) => {
         messages = parsed;
         return messages;
