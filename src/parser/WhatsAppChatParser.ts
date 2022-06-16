@@ -1,5 +1,6 @@
 import moment from "moment";
 import type { Message } from "../types/Message.type";
+import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { Parser } from "./Parser";
 
 export class WhatsAppChatParser extends Parser {
@@ -16,7 +17,7 @@ export class WhatsAppChatParser extends Parser {
 
     // TODO: parse special messages beginning with an U+200E
     // TODO: This is CPU blocking -> use a worker
-    async parseRaw(raw: string): Promise<Message[]> {
+    async parseRaw(raw: string): Promise<WhatsAppMessage[]> {
         let parsedMessages = [];
         Array.from(raw.matchAll(this.rg_TimeAndName)).forEach((match) => {
             let m = match.at(0);
