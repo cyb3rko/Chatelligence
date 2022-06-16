@@ -2,9 +2,10 @@
   import type { Message } from "./types/Message.type";
   import moment from "moment";
   import BarChart from "./Charts/BarChart.svelte";
-import BarMessageHoursChart from "./Charts/MessageHoursBarChart.svelte";
-import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
-import { countWords } from "./untils/counting";
+  import BarMessageHoursChart from "./Charts/MessageHoursBarChart.svelte";
+  import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
+  import { countWords } from "./untils/counting";
+  import { emptyArray } from "./untils/array";
 
   let files;
 
@@ -120,8 +121,8 @@ import { countWords } from "./untils/counting";
       totalWordCount: 0,
       avgWordCount: 0, // per user
       wordsPerMessage: 0,
-      totalMessageHours: Array.from<number>({ length: 24 }).fill(0),
-      avgMessageHours: Array.from<number>({ length: 24 }).fill(0), // per user
+      totalMessageHours: emptyArray(24, 0),
+      avgMessageHours: emptyArray(24, 0), // per user
     };
 
     senderStatsArray.forEach((s) => {
