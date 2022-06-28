@@ -1,6 +1,7 @@
 import moment from "moment";
 import type { Message } from "../types/Message.type";
 import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
+import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 import { Parser } from "./Parser";
 
 export class WhatsAppChatParser extends Parser {
@@ -45,6 +46,7 @@ export class WhatsAppChatParser extends Parser {
             lastMessage.index + lastMessage.length + 1
         );
         return parsedMessages.map((m) => ({
+            type: WhatsAppMessageType.Text, // TODO: parse special messages
             sender: m.sender,
             time: moment(m.time, "DD-MM-YYYY, HH:mm:ss").toDate(),
             message: m.message,
