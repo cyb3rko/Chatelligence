@@ -6,15 +6,21 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test:watch": "jest src/ --watch"
   },
   "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.0",
-    "@types/moment": "^2.13.0",
     "@types/chart.js": "^2.9.37",
+    "@types/jest": "^28.1.4",
+    "@types/moment": "^2.13.0",
+    "babel-jest": "^28.1.2",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.0",
@@ -23,6 +29,7 @@
     "svelte": "^3.0.0",
     "svelte-check": "^2.0.0",
     "svelte-preprocess": "^4.0.0",
+    "ts-jest": "^28.0.5",
     "tslib": "^2.0.0",
     "typescript": "^4.0.0"
   },
