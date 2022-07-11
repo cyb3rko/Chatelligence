@@ -7,6 +7,12 @@ function print(...params: any) {
     console.log("[Worker 🔨]:", ...params);
 }
 
+const r_url = /(http|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+const r_phoneNumbers = /(\^|\+|\s)+[0-9]{2,3}\s?[0-9]{2,14}\s?[0-9]{2,9}(\s|$|\u202c)/;
+
+// https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression (edited for uppercase cases)
+const r_email = /(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+
 print("Hello World!");
 
 const parser = new WhatsAppChatParser();
@@ -97,9 +103,57 @@ async function analyze(messages: Message[]) {
         (mh) => mh / senderStatsArray.length
       );
 
+
+    /**
+     * URL finder
+     */
+    const urls = new Set();
+    messages.forEach(m => {
+        let match = m.message.match(r_url);
+        
+        if(match) urls.add({url: match[0], message: m});
+    })
+
+    /**
+     * Phone numbers
+     */
+    const phoneNumbers = new Set();
+    messages.forEach(m => {
+        let match = m.message.match(r_phoneNumbers);
+        
+        if(match) phoneNumbers.add({phoneNumber: match[0], message: m});
+    })
+
+    /**
+     * Phone numbers
+     */
+     const emailAdresses = new Set();
+     messages.forEach(m => {
+         let match = m.message.match(r_email);
+         
+         if(match) emailAdresses.add({email: match[0], message: m});
+     })
+
     return {
       sender,
       senderStats: senderStatsArray,
       averageSenderStats,
+      wordStatistics: await analyzeWords(messages),
+      urls,
+      phoneNumbers,
+      emailAdresses
     };
+  }
+
+  async function analyzeWords(messages: Message[]) {
+    const overallWordCount = new Map();
+
+    let temp = "";
+    messages.forEach(m => {
+        m.message.split(" ").forEach(w => {
+            temp = w.trim()
+            overallWordCount.set(temp, (overallWordCount.get(temp) ?? 0) + 1);
+        })
+    })
+    return { overallWordCount }
   }
