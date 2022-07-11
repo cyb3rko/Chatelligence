@@ -1,14 +1,34 @@
 <script lang="ts">
-  import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
+  import BarChart from "./Charts/BarChart.svelte";
+import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
   import { WhatsAppChatParser } from "./parser/WhatsAppChatParser";
   import type { Message } from "./types/Message.type";
-  import { emptyArray } from "./untils/array";
+import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
+  import { emptyArray, top } from "./untils/array";
   import { countWords } from "./untils/counting";
 
   let files;
 
-  let messages = [];
-  let analyis;
+  let messages: WhatsAppMessage[] = [];
+  let analyis: {
+    sender: Set<string>;
+    senderStats: {
+        sender: string;
+        messageCount: any;
+        wordCount: any;
+        wordsPerMessage: number;
+        messageHours: number[];
+    }[];
+    averageSenderStats: {
+      totalMessageCount: number;
+      avgMessageCount: number;
+    totalWordCount: number;
+    avgWordCount: number;
+    wordsPerMessage: number;
+    totalMessageHours: number[];
+    avgMessageHours: number[];
+    }
+  };
 
   const parser = new WhatsAppChatParser();
 
@@ -105,6 +125,18 @@
       averageSenderStats,
     };
   }
+
+  let topMessanger: {
+    sender: string;
+    messageCount: any;
+    wordCount: any;
+    wordsPerMessage: number;
+    messageHours: number[];
+  }[];
+
+  $: {
+    topMessanger = analyis?.senderStats ? top(analyis.senderStats, 10, "messageCount") : [];
+  }
 </script>
 
 <main>
@@ -123,6 +155,8 @@
     {/if}
 
     <MessageHoursBarChart senderStats={analyis?.senderStats} />
+
+    <BarChart data={{ labels: topMessanger.map(m => m.sender), datasets: [ { data: topMessanger.map(m => m.messageCount) } ] }} />
   </div>
 </main>
 
