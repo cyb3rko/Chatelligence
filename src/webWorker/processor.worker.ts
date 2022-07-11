@@ -13,22 +13,21 @@ const parser = new WhatsAppChatParser();
 
 onmessage = (m) => {
     const data: string = m.data[0] as string;
-    console.log(data.length);
 
-    let messages;
-    let analyis;
+    postMessage(["StatusUpdate", "Parsing"]);
 
     parser
     .parseRaw(data)
     .then((parsed) => {
-        console.log(parsed);
-      messages = parsed;
-      return messages;
+      postMessage(["StatusUpdate", "Analysing"]);
+      postMessage(["Messages", parsed]);
+      return parsed;
     })
     .then(analyze)
     .then((result) => {
-      analyis = result;
-      console.log(analyis);
+      postMessage(["StatusUpdate", "Done"]);
+      postMessage(["Analysis", result]);
+      console.log(result);
     });
 }
 

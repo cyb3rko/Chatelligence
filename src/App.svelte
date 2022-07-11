@@ -29,8 +29,27 @@
   };
 
   const worker = new Worker("build/processor.worker.js");
+  let workerStatus;
 
-  worker.onmessage = console.log;
+  worker.onmessage = (m) => {
+    console.log(m.data);
+    switch (m.data[0]) {
+      case "StatusUpdate":
+        workerStatus = m.data[1];
+        break;
+
+      case "Messages":
+        messages = m.data[1]
+        break;
+      
+      case "Analysis":
+        analyis = m.data[1]
+        break;
+    
+      default:
+        break;
+    }
+  };
 
   const fileReader = new FileReader();
   fileReader.onload = (e) => {
@@ -62,6 +81,9 @@
   <h1>Hello</h1>
   <div>
     {#if files && files[0]}
+      <p>
+        workerStatus: { workerStatus }
+      </p>
       <p>
         {files[0].name} ({Math.round(files[0].size / 1024)} kb | {messages.length}
         lines)
