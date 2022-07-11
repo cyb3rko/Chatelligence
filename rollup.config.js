@@ -6,6 +6,9 @@ import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
+import path from 'path';
+import fs from 'fs';
+import * as ts from "typescript";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -64,6 +67,19 @@ export default {
 			sourceMap: !production,
 			inlineSources: !production
 		}),
+
+		{
+			name: 'copy-web-worker',
+			load() {
+			  	this.addWatchFile(path.resolve('./src/webWorker/processor.worker.ts'));
+			},
+			generateBundle() {
+				const source = fs.readFileSync(path.resolve('./src/webWorker/processor.worker.ts')).toString();
+				fs.writeFileSync(path.resolve('./public/build/processor.worker.js'), ts.transpile(source, {
+					target: "es2017",
+				}));
+			}
+		},
 
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated

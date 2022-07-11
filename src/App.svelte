@@ -1,6 +1,4 @@
 <script lang="ts">
-  import BarChart from "./Charts/BarChart.svelte";
-  import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
   import Evaluation from "./page/Evaluation.svelte";
   import { WhatsAppChatParser } from "./parser/WhatsAppChatParser";
   import type { Message } from "./types/Message.type";
@@ -36,6 +34,8 @@
   const fileReader = new FileReader();
   fileReader.onload = (e) => {
     let result = e.target.result as string;
+
+    const worker = new Worker("build/processor.worker.js");
 
     parser
       .parseRaw(result)
