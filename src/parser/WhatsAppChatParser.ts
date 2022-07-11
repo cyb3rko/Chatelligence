@@ -1,5 +1,4 @@
 import moment from "moment";
-import type { Message } from "../types/Message.type";
 import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 import { Parser } from "./Parser";
