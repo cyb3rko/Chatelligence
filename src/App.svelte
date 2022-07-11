@@ -1,9 +1,10 @@
 <script lang="ts">
   import BarChart from "./Charts/BarChart.svelte";
-import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
+  import MessageHoursBarChart from "./Charts/MessageHoursBarChart.svelte";
+  import Evaluation from "./page/Evaluation.svelte";
   import { WhatsAppChatParser } from "./parser/WhatsAppChatParser";
   import type { Message } from "./types/Message.type";
-import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
+  import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
   import { emptyArray, top } from "./untils/array";
   import { countWords } from "./untils/counting";
 
@@ -150,14 +151,11 @@ import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
       <p>
         frist message: {messages[0]}
       </p>
+      <Evaluation senderStats={analyis?.senderStats} topMessanger={topMessanger} />
     {:else}
       <input type="file" bind:files accept=".txt" />
     {/if}
-
-    <MessageHoursBarChart senderStats={analyis?.senderStats} />
-
-    <BarChart data={{ labels: topMessanger.map(m => m.sender), datasets: [ { data: topMessanger.map(m => m.messageCount) } ] }} />
-  </div>
+ </div>
 </main>
 
 <style>
