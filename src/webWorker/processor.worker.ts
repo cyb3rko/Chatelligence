@@ -161,12 +161,11 @@ async function analyze(messages: Message[]) {
   async function analyzeWords(messages: Message[]) {
     const overallWordCount = new Map();
 
-    let temp = "";
+    const r_word = /[a-zA-Z]+/g;
     messages.forEach(m => {
-        m.message.split(" ").forEach(w => {
-            temp = w.trim()
-            overallWordCount.set(temp, (overallWordCount.get(temp) ?? 0) + 1);
-        })
+      Array.from(m.message.matchAll(r_word)).forEach(word => {
+        overallWordCount.set(word[0].toLowerCase(), (overallWordCount.get(word[0].toLowerCase()) ?? 0) + 1);
+      });
     })
     return { overallWordCount }
   }
