@@ -138,10 +138,11 @@ async function analyze(messages: Message[]) {
      /**
       * Emojis
       */
-    const emojis = new Map();
+    const emojis = new Map<string, number>();
     messages.forEach(m  => {
       Array.from(m.message.matchAll(r_emoji)).forEach(emoji => {
-        emojis.set(emoji[0], (emojis.get(emoji[0]) ?? 0) + 1);
+        if(!['\u200D', '\u200E', '\u2019', "“", "„", "\u202C", "\u202A", "…", "—", ].includes(emoji[0])) // Blacklist
+          emojis.set(emoji[0], (emojis.get(emoji[0]) ?? 0) + 1);
       });
     });
 
