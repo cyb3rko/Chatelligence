@@ -121,7 +121,7 @@ async function analyze(messages: Message[]) {
     const phoneNumbers = new Set();
     messages.forEach(m => {
       Array.from(m.message.matchAll(r_phoneNumbers)).forEach(phone => {
-        phoneNumbers.add({phoneNumber: phone[0], message: m});
+        phoneNumbers.add({phoneNumber: phone[0].trim(), message: m});
       });
     })
 
