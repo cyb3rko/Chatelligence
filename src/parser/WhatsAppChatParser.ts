@@ -43,11 +43,34 @@ export class WhatsAppChatParser extends Parser {
             lastMessage.index + lastMessage.length + 1
         );
         return parsedMessages.map((m) => ({
-            type: WhatsAppMessageType.Text, // TODO: parse special messages
+            type: this.getMessageType(m.message), // TODO: parse special messages
             sender: m.sender,
             time: moment(m.time, "DD-MM-YYYY, HH:mm:ss").toDate(),
             message: m.message,
         }));
+    }
+
+    r_sticker = /\u200e(sticker omitted)/;
+    r_image = /\u200e(image omitted)/;
+    r_video = /\u200e(video omitted)/;
+    r_gif = /\u200e(GIF omitted)/;
+    r_audio = /\u200e(audio omitted)/;
+    r_location = /\u200e(Location\: https\:\/\/maps\.google\.com\/\?q\=)\d+\.\d+\,\d+\.\d+/;
+    r_contactCard = /\u200e(Contact card omitted)/;
+    r_document = /\u200e(document omitted)/;
+
+    getMessageType(message: string): WhatsAppMessageType {
+        if(message.match(this.r_sticker)) return WhatsAppMessageType.Sticker;
+        if(message.match(this.r_image)) return WhatsAppMessageType.Image;
+        if(message.match(this.r_video)) return WhatsAppMessageType.Video;
+        if(message.match(this.r_gif)) return WhatsAppMessageType.Gif;
+        if(message.match(this.r_audio)) return WhatsAppMessageType.Audio;
+        if(message.match(this.r_location)) return WhatsAppMessageType.Location;
+        if(message.match(this.r_contactCard)) return WhatsAppMessageType.ContactCard;
+        if(message.match(this.r_document)) return WhatsAppMessageType.Document;
+
+
+        return WhatsAppMessageType.Text;
     }
 
 }
