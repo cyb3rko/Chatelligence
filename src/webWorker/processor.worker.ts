@@ -126,7 +126,7 @@ async function analyze(messages: Message[]) {
     })
 
     /**
-     * Phone numbers
+     * Email adresses
      */
      const emailAdresses = new Set();
      messages.forEach(m => {
