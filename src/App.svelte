@@ -25,7 +25,8 @@
     wordsPerMessage: number;
     totalMessageHours: number[];
     avgMessageHours: number[];
-    }
+    };
+    emojis: Map<string, number>;
   };
 
   const worker = new Worker("build/processor.worker.js");
@@ -91,7 +92,10 @@
       <p>
         frist message: {messages[0]}
       </p>
-      <Evaluation senderStats={analyis?.senderStats} topMessanger={topMessanger} />
+      <Evaluation 
+        senderStats={analyis?.senderStats}
+        topMessanger={topMessanger}
+        emojsCounts={analyis?.emojis ? Array.from(analyis?.emojis?.entries()).map(e => { return { value: e[1], label: e[0] } }) : []} />
     {:else}
       <input type="file" bind:files accept=".txt" />
     {/if}

@@ -1,9 +1,11 @@
 <script lang="ts">
     import BarChart from "../Charts/BarChart.svelte";
+    import BubbleChart from "../Charts/BubbleChart.svelte";
     import MessageHoursBarChart from "../Charts/MessageHoursBarChart.svelte";
 
     export let senderStats;
     export let topMessanger;
+    export let emojsCounts;
 </script>
 
 <evaluation>
@@ -18,6 +20,11 @@
                 datasets: [{ data: topMessanger.map((m) => m.messageCount) }],
             }}
         />
+
+        <h2>Emojis</h2>
+        <div style="width: calc(100% - 16px);">
+            <BubbleChart data={emojsCounts} />
+        </div>
     {/if}
 </evaluation>
 
