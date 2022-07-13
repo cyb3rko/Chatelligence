@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ChatMessage from "./components/Message.svelte";
   import Evaluation from "./page/Evaluation.svelte";
   import type { Message } from "./types/Message.type";
   import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
@@ -90,7 +91,7 @@
         lines)
       </p>
       <p>
-        frist message: {messages[0]}
+        frist message (Skipped system message): <ChatMessage message={messages[1]} />
       </p>
       <Evaluation 
         senderStats={analyis?.senderStats}
@@ -104,5 +105,13 @@
 
 <style>
   main {
+  }
+
+  :global(*) {
+    --messageBGColor: #363637;
+    --messageFontColor: #fdfdfd;
+    --messageFont: Helvetica;
+    --messageDateFontColor: #a2a2aa;
+    --noData: red;
   }
 </style>
