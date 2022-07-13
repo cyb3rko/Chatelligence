@@ -14,7 +14,7 @@ export class WhatsAppChatParser extends Parser {
         /(\u200e)*(\[)([0-9]{2}(\.)){2}[0-9]{2}(,)\s{1}[0-2][0-9](:)[0-5][0-9](:)[0-5][0-9](\])(\s){1}[^:]+(: ){1}/g;
 
 
-    // TODO: parse special messages beginning with an U+200E
+    // TODO: parse "system" messages from groups (without sender).
     async parseRaw(raw: string): Promise<WhatsAppMessage[]> {
         let parsedMessages = [];
         Array.from(raw.matchAll(this.rg_TimeAndName)).forEach((match) => {
