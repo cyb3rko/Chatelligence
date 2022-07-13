@@ -130,9 +130,9 @@ async function analyze(messages: Message[]) {
      */
      const emailAdresses = new Set();
      messages.forEach(m => {
-         let match = m.message.match(r_email);
-         
-         if(match) emailAdresses.add({email: match[0], message: m});
+          Array.from(m.message.matchAll(r_email)).forEach(email => {
+            emailAdresses.add({email: email[0], message: m});
+          })
      })
 
      /**
