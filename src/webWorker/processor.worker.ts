@@ -13,6 +13,7 @@ const r_phoneNumbers = /(\^|\+|\s)+[0-9]{2,3}\s?[0-9]{2,14}\s?[0-9]{2,9}(\s|$|\u
 // https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression (edited for uppercase cases)
 const r_email = /(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g;
 const r_emoji = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9]+/g;
 
 print("Hello World!");
 
@@ -146,6 +147,16 @@ async function analyze(messages: Message[]) {
       });
     });
 
+    /**
+     * Social Handles
+     */
+     const socialHandles = new Set();
+     messages.forEach(m => {
+          Array.from(m.message.matchAll(r_socialHandles)).forEach(handle => {
+            socialHandles.add({handle: handle[0], message: m});
+          })
+     })
+
 
     return {
       sender,
@@ -156,6 +167,7 @@ async function analyze(messages: Message[]) {
       phoneNumbers,
       emailAdresses,
       emojis,
+      socialHandles,
     };
   }
 
