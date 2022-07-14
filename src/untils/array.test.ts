@@ -7,12 +7,12 @@ const testArray: Array<{ name: string, age: number, credits: number }> = [
     { name: "Dario", age: 18, credits: 400 },
 ];
 
-const threeOldestSolution = [ testArray[2], testArray[1], testArray[0] ];
+const threeOldestSolution = [testArray[2], testArray[1], testArray[0]];
 const alphabeticallyOrderedSolution = testArray;
 
 test('top function (order by number)', () => {
     let threeOldest = top([...testArray], 3, "age");
-    
+
     expect(threeOldest.length).toEqual(3);
     expect(threeOldest).toEqual(threeOldestSolution);
 });

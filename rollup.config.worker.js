@@ -14,8 +14,8 @@ export default {
     },
     plugins: [
         resolve({
-			browser: true
-		}),
+            browser: true
+        }),
         commonjs(),
         typescript({
             sourceMap: !production,

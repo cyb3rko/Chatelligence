@@ -60,14 +60,14 @@ export class WhatsAppChatParser extends Parser {
     r_document = /\u200e(document omitted)/;
 
     getMessageType(message: string): WhatsAppMessageType {
-        if(message.match(this.r_sticker)) return WhatsAppMessageType.Sticker;
-        if(message.match(this.r_image)) return WhatsAppMessageType.Image;
-        if(message.match(this.r_video)) return WhatsAppMessageType.Video;
-        if(message.match(this.r_gif)) return WhatsAppMessageType.Gif;
-        if(message.match(this.r_audio)) return WhatsAppMessageType.Audio;
-        if(message.match(this.r_location)) return WhatsAppMessageType.Location;
-        if(message.match(this.r_contactCard)) return WhatsAppMessageType.ContactCard;
-        if(message.match(this.r_document)) return WhatsAppMessageType.Document;
+        if (message.match(this.r_sticker)) return WhatsAppMessageType.Sticker;
+        if (message.match(this.r_image)) return WhatsAppMessageType.Image;
+        if (message.match(this.r_video)) return WhatsAppMessageType.Video;
+        if (message.match(this.r_gif)) return WhatsAppMessageType.Gif;
+        if (message.match(this.r_audio)) return WhatsAppMessageType.Audio;
+        if (message.match(this.r_location)) return WhatsAppMessageType.Location;
+        if (message.match(this.r_contactCard)) return WhatsAppMessageType.ContactCard;
+        if (message.match(this.r_document)) return WhatsAppMessageType.Document;
 
 
         return WhatsAppMessageType.Text;

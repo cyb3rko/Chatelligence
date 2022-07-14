@@ -1,6 +1,4 @@
 <script lang="ts">
-import App from "../App.svelte";
-
     import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 
     export let type: WhatsAppMessageType;
@@ -8,7 +6,12 @@ import App from "../App.svelte";
     let label = "unknown type";
 
     $: {
-        label = getEmoji(type) + " " + Object.keys(WhatsAppMessageType)[Object.values(WhatsAppMessageType).indexOf(type)] ?? "⚠️ unknown type";
+        label =
+            getEmoji(type) +
+                " " +
+                Object.keys(WhatsAppMessageType)[
+                    Object.values(WhatsAppMessageType).indexOf(type)
+                ] ?? "⚠️ unknown type";
     }
 
     const getEmoji = (type: WhatsAppMessageType) => {
@@ -31,16 +34,14 @@ import App from "../App.svelte";
                 return "🖍";
             case WhatsAppMessageType.Video:
                 return "📼";
-        
+
             default:
                 return "❓";
         }
-    }
+    };
 </script>
 
-<messagetypeindicator class={type}>
-    {label}
-</messagetypeindicator>
+<messagetypeindicator class={type}>{label}</messagetypeindicator>
 
 <style>
     messagetypeindicator {

@@ -12,7 +12,7 @@ export function emptyArray<T>(length: number, fillValue?: T): T[] {
  */
 export function top<T>(what: Array<T>, count: number, ofWhat: keyof T, highest: boolean = true): T[] {
     const sorted = [...what].sort((a, b) => a[ofWhat] < b[ofWhat] ? 1 : -1);
-    if(!highest) sorted.reverse();
+    if (!highest) sorted.reverse();
     sorted.length = sorted.length > count ? count : sorted.length;
     return sorted;
 }

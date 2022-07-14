@@ -1,9 +1,9 @@
 <script lang="ts">
-import moment from "moment";
+    import moment from "moment";
+    import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
+    import type { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
+    import MessageTypeIndicator from "./MessageTypeIndicator.svelte";
 
-import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
-import type { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
-import MessageTypeIndicator from "./MessageTypeIndicator.svelte";
     export let message: WhatsAppMessage;
 
     let content: string;
@@ -20,11 +20,17 @@ import MessageTypeIndicator from "./MessageTypeIndicator.svelte";
 </script>
 
 <message>
-    <MessageTypeIndicator type={type} />
+    <MessageTypeIndicator {type} />
     <sender class={sender ? "ok" : "empty"}>{sender ?? "⚠️ No sender."}</sender>
-    <br>
-    <content class={content ? "ok" : "empty"}>{content ?? "⚠️ No content."}</content>
-    <date class={time ? "ok" : "empty"}>{time ? moment(time).format("(dd) DD.MM.YYYY hh:mm") : "⚠️ No date."}</date>
+    <br />
+    <content class={content ? "ok" : "empty"}
+        >{content ?? "⚠️ No content."}</content
+    >
+    <date class={time ? "ok" : "empty"}
+        >{time
+            ? moment(time).format("(dd) DD.MM.YYYY hh:mm")
+            : "⚠️ No date."}</date
+    >
 </message>
 
 <style>
@@ -50,7 +56,7 @@ import MessageTypeIndicator from "./MessageTypeIndicator.svelte";
         background-color: var(--messageBGColor);
         color: var(--messageFontColor);
         font-family: var(--messageFont);
-        font-size: 1.0em;
+        font-size: 1em;
         border-radius: 8px;
     }
 
