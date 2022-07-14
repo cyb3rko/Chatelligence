@@ -7,7 +7,7 @@ function print(...params: any) {
     console.log("[Worker 🔨]:", ...params);
 }
 
-const r_url = /(http|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+const r_url = /(http|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
 const r_phoneNumbers = /(^|\+|\s)+[0-9]{2,3}\s?[0-9]{2,14}\s?[0-9]{2,9}(\s|$|\u202c)/g;
 
 // https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression (edited for uppercase cases)
@@ -111,9 +111,9 @@ async function analyze(messages: Message[]) {
      */
     const urls = new Set();
     messages.forEach(m => {
-        let match = m.message.match(r_url);
-        
-        if(match) urls.add({url: match[0], message: m});
+      Array.from(m.message.matchAll(r_url)).forEach(url => {
+        urls.add({url: url[0], message: m});
+      });
     })
 
     /**
