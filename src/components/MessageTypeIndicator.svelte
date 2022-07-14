@@ -52,12 +52,44 @@ import App from "../App.svelte";
         background-color: rgb(17, 16, 16);
     }
 
-    /* TODO: fix */
-    messagetypeindicator :global(.undefined) {
+    /* TODO: adjust styling */
+    messagetypeindicator:global(.undefined) {
         background-color: aqua;
     }
 
-    messagetypeindicator :global(.text) {
+    messagetypeindicator:global(.text) {
+        background-color: lightgray;
+    }
+
+    messagetypeindicator:global(.image) {
+        background-color: lightgray;
+    }
+
+    messagetypeindicator:global(.video) {
+        background-color: lightgray;
+    }
+
+    messagetypeindicator:global(.gif) {
+        background-color: lightgray;
+    }
+
+    messagetypeindicator:global(.sticker) {
+        background-color: lightgray;
+    }
+
+    messagetypeindicator:global(.audio) {
+        background-color: lightgray;
+    }
+
+    messagetypeindicator:global(.location) {
+        background-color: lightgray;
+    }
+
+    messagetypeindicator:global(.contactcard) {
+        background-color: lightgray;
+    }
+
+    messagetypeindicator:global(.document) {
         background-color: lightgray;
     }
 </style>
