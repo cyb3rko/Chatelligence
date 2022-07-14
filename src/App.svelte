@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { path } from "d3";
+    import { Router, Link, Route } from "svelte-routing";
     import ChatMessage from "./components/Message.svelte";
     import Evaluation from "./page/Evaluation.svelte";
     import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
@@ -80,34 +82,44 @@
 </script>
 
 <main>
-    <h1>Hello</h1>
-    <div>
-        {#if files && files[0]}
-            <p>
-                workerStatus: {workerStatus}
-            </p>
-            <p>
-                {files[0].name} ({Math.round(files[0].size / 1024)} kb | {messages.length}
-                lines)
-            </p>
-            <p>
-                frist message (Skipped system message): <ChatMessage
-                    message={messages[1]}
-                />
-            </p>
-            <Evaluation
-                senderStats={analyis?.senderStats}
-                {topMessanger}
-                emojsCounts={analyis?.emojis
-                    ? Array.from(analyis?.emojis?.entries()).map((e) => {
-                          return { value: e[1], label: e[0] };
-                      })
-                    : []}
-            />
-        {:else}
-            <input type="file" bind:files accept=".txt" />
-        {/if}
-    </div>
+    <Router>
+        <Route path="/">
+            <h1>Index</h1>
+        </Route>
+        <Route path="/app/*">
+            <h1>Hello</h1>
+            <div>
+                {#if files && files[0]}
+                    <p>
+                        workerStatus: {workerStatus}
+                    </p>
+                    <p>
+                        {files[0].name} ({Math.round(files[0].size / 1024)} kb |
+                        {messages.length}
+                        lines)
+                    </p>
+                    <p>
+                        frist message (Skipped system message): <ChatMessage
+                            message={messages[1]}
+                        />
+                    </p>
+                    <Evaluation
+                        senderStats={analyis?.senderStats}
+                        {topMessanger}
+                        emojsCounts={analyis?.emojis
+                            ? Array.from(analyis?.emojis?.entries()).map(
+                                  (e) => {
+                                      return { value: e[1], label: e[0] };
+                                  },
+                              )
+                            : []}
+                    />
+                {:else}
+                    <input type="file" bind:files accept=".txt" />
+                {/if}
+            </div>
+        </Route>
+    </Router>
 </main>
 
 <style>
