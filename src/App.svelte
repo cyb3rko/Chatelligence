@@ -37,7 +37,7 @@
     console.log(m.data);
     switch (m.data[0]) {
       case "StatusUpdate":
-        workerStatus = m.data[1];
+        workerStatus = m.data[1] + (m.data[2] ? " " + m.data[2] : "");
         break;
 
       case "Messages":

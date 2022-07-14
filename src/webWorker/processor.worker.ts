@@ -48,6 +48,7 @@ async function analyze(messages: Message[]) {
      * SENDER STATS
      */
 
+    postMessage(["StatusUpdate", "Analysing", "sender specific data..."]);
     let senderStats = {};
 
     sender.forEach((s) => {
@@ -77,6 +78,8 @@ async function analyze(messages: Message[]) {
     /*
      * AVERAGE STATS
      */
+
+    postMessage(["StatusUpdate", "Analysing", "average data..."]);
 
     let averageSenderStats = {
       totalMessageCount: 0,
@@ -109,6 +112,9 @@ async function analyze(messages: Message[]) {
     /**
      * URL finder
      */
+
+     postMessage(["StatusUpdate", "Analysing", "urls..."]);
+
     const urls = new Set();
     messages.forEach(m => {
       Array.from(m.message.matchAll(r_url)).forEach(url => {
@@ -119,6 +125,9 @@ async function analyze(messages: Message[]) {
     /**
      * Phone numbers
      */
+
+     postMessage(["StatusUpdate", "Analysing", "phone numbers..."]);
+
     const phoneNumbers = new Set();
     messages.forEach(m => {
       Array.from(m.message.matchAll(r_phoneNumbers)).forEach(phone => {
@@ -129,6 +138,9 @@ async function analyze(messages: Message[]) {
     /**
      * Email adresses
      */
+    
+     postMessage(["StatusUpdate", "Analysing", "adresses..."]);
+
      const emailAdresses = new Set();
      messages.forEach(m => {
           Array.from(m.message.matchAll(r_email)).forEach(email => {
@@ -139,6 +151,9 @@ async function analyze(messages: Message[]) {
      /**
       * Emojis
       */
+
+      postMessage(["StatusUpdate", "Analysing", "emojis..."]);
+
     const emojis = new Map<string, number>();
     messages.forEach(m  => {
       Array.from(m.message.matchAll(r_emoji)).forEach(emoji => {
@@ -150,6 +165,9 @@ async function analyze(messages: Message[]) {
     /**
      * Social Handles
      */
+
+     postMessage(["StatusUpdate", "Analysing", "social handles..."]);
+
      const socialHandles = new Set();
      messages.forEach(m => {
           Array.from(m.message.matchAll(r_socialHandles)).forEach(handle => {
@@ -172,6 +190,8 @@ async function analyze(messages: Message[]) {
   }
 
   async function analyzeWords(messages: Message[]) {
+
+    postMessage(["StatusUpdate", "Analysing", "words..."]);
     const overallWordCount = new Map();
 
     const r_word = /[a-zA-Z]+/g;
