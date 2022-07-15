@@ -6,6 +6,9 @@
     import { top } from "./utils/array";
 
     let files;
+    /**
+     * The operating system of the device the chat got exported from.
+     */
     let os;
 
     let messages: WhatsAppMessage[] = [];
