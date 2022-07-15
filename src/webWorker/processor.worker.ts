@@ -26,12 +26,23 @@ onmessage = (m) => {
 
   postMessage(["StatusUpdate", "Parsing"]);
 
-  parser
-    .parseRaw(data)
+  Promise.allSettled([
+    parser.parseRaw(data),
+  ]).then(async (results) => {
+    const errorMessages = [];
+
+    // find the first successful parser
+    const result = results.find(result => result.status === "fulfilled");
+
+    if (result)
+      return (result as PromiseFulfilledResult<WhatsAppMessage[]>).value;
+
+    throw new Error("No parser could parse the file.\n" + errorMessages.join("\n---\n"));
+  })
     .then((parsed) => {
       postMessage(["StatusUpdate", "Analysing"]);
       postMessage(["Messages", parsed]);
-      return parsed;
+      return parsed as WhatsAppMessage[];
     })
     .then(analyze)
     .then((result) => {
