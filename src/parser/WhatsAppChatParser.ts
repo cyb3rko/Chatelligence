@@ -18,10 +18,10 @@ export class WhatsAppChatParser extends Parser {
         let parsedMessages = [];
         Array.from(raw.matchAll(this.rg_TimeAndName)).forEach((match) => {
             let m = match.at(0);
-            let time = m.match(this.r_Time).at(0);
+            let time = m.match(this.r_Time).at(0).replace("\u200e", "");
             if (time.startsWith("["))
                 time = time.substring(1, time.length - 1);
-            let sender = m.substring(time.length + 3, m.length - 2);
+            let sender = m.substring(time.length + 3, m.length - 2).trim();
             let lastMessage = parsedMessages[parsedMessages.length - 1];
             if (lastMessage) {
                 lastMessage.length = lastMessage.length - 1;
