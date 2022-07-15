@@ -3,15 +3,15 @@ import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 import { Parser } from "./Parser";
 
-export class WhatsAppChatParseriOS extends Parser {
+export class WhatsAppChatParser extends Parser {
 
     /**
      * regex to match the time stamp
-     * a.e. "[31.10.21, 11:58:58]"
+     * a.e. "[31.10.21, 11:58:58]" or "31.10.21, 11:58:58" or "31/10/21, 11:58:58"
      */
-    r_Time = /(\u200e)?(\[\d{2}\.\d{2}\.\d{2}\, \d{2}\:\d{2}\:\d{2}\])/g;
+    r_Time = /(\u200e)?(\[?\d{2}(\.|\/)\d{2}(\.|\/)\d{2,4}\, \d{2}\:\d{2}(\:\d{2})?\]?)/g;
     rg_TimeAndName =
-        /(\u200e)*(\[)([0-9]{2}(\.)){2}[0-9]{2}(,)\s{1}[0-2][0-9](:)[0-5][0-9](:)[0-5][0-9](\])(\s){1}[^:]+(: ){1}/g;
+        /(\u200e)?(\[?\d{2}(\.|\/)\d{2}(\.|\/)\d{2,4}\, \d{2}\:\d{2}(\:\d{2})?\]?)(\s){1}[^:]+(: ){1}/g;
 
 
     // TODO: parse "system" messages from groups (without sender).
@@ -20,7 +20,8 @@ export class WhatsAppChatParseriOS extends Parser {
         Array.from(raw.matchAll(this.rg_TimeAndName)).forEach((match) => {
             let m = match.at(0);
             let time = m.match(this.r_Time).at(0);
-            time = time.substring(1, time.length - 1);
+            if (time.startsWith("["))
+                time = time.substring(1, time.length - 1);
             let sender = m.substring(time.length + 3, m.length - 2);
             let lastMessage = parsedMessages[parsedMessages.length - 1];
             if (lastMessage) {
@@ -42,6 +43,11 @@ export class WhatsAppChatParseriOS extends Parser {
         parsedMessages[parsedMessages.length - 1].message = raw.substring(
             lastMessage.index + lastMessage.length + 1
         );
+
+        console.log(parsedMessages[0].time);
+
+        const dateString = (parsedMessages[0].time as string);
+
         return parsedMessages.map((m) => ({
             type: this.getMessageType(m.message), // TODO: parse special messages
             sender: m.sender,
@@ -58,6 +64,7 @@ export class WhatsAppChatParseriOS extends Parser {
     r_location = /\u200e(Location\: https\:\/\/maps\.google\.com\/\?q\=)\d+\.\d+\,\d+\.\d+/;
     r_contactCard = /\u200e(Contact card omitted)/;
     r_document = /\u200e(document omitted)/;
+    r_media = /\A\<(Media omitted)\>\Z/;
 
     getMessageType(message: string): WhatsAppMessageType {
         if (message.match(this.r_sticker)) return WhatsAppMessageType.Sticker;
@@ -68,7 +75,7 @@ export class WhatsAppChatParseriOS extends Parser {
         if (message.match(this.r_location)) return WhatsAppMessageType.Location;
         if (message.match(this.r_contactCard)) return WhatsAppMessageType.ContactCard;
         if (message.match(this.r_document)) return WhatsAppMessageType.Document;
-
+        if (message.match(this.r_media)) return WhatsAppMessageType.Media;
 
         return WhatsAppMessageType.Text;
     }

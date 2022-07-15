@@ -1,4 +1,4 @@
-import { WhatsAppChatParseriOS } from "../parser/WhatsAppChatParseriOS";
+import { WhatsAppChatParser } from "../parser/WhatsAppChatParser";
 import type { Message } from "../types/Message.type";
 import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
@@ -19,7 +19,7 @@ const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9\.\#]+/g;
 
 print("Hello World!");
 
-const parser = [new WhatsAppChatParseriOS()]
+const parser = [new WhatsAppChatParser()]
 
 onmessage = (m) => {
   const data: string = m.data[0] as string;
@@ -38,7 +38,7 @@ onmessage = (m) => {
       if (result)
         return (result as PromiseFulfilledResult<WhatsAppMessage[]>).value;
 
-      throw new Error("No parser could parse the file.\n" + errorMessages.join("\n---\n"));
+      throw new Error("No parser could parse the file.\n" + errorMessages?.join("\n---\n"));
     })
     .then((parsed) => {
       postMessage(["StatusUpdate", "Analysing"]);

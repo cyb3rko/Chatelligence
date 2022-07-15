@@ -8,4 +8,8 @@ export enum WhatsAppMessageType {
     Location = "location",
     ContactCard = "contactcard",
     Document = "document",
+    /**
+     * Ugly android wildcard for all messages that are not text.
+     */
+    Media = "media",
 }
