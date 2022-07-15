@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { path } from "d3";
     import { Router, Link, Route } from "svelte-routing";
     import ChatMessage from "./components/Message.svelte";
     import Evaluation from "./page/Evaluation.svelte";
     import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
-    import { top } from "./untils/array";
+    import { top } from "./utils/array";
 
     let files;
 

@@ -3,7 +3,7 @@ import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 import { Parser } from "./Parser";
 
-export class WhatsAppChatParser extends Parser {
+export class WhatsAppChatParseriOS extends Parser {
 
     /**
      * regex to match the time stamp

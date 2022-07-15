@@ -1,9 +1,9 @@
-import { WhatsAppChatParser } from "../parser/WhatsAppChatParser";
+import { WhatsAppChatParseriOS } from "../parser/WhatsAppChatParseriOS";
 import type { Message } from "../types/Message.type";
 import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
-import { emptyArray } from "../untils/array";
-import { countWords } from "../untils/counting";
+import { emptyArray } from "../utils/array";
+import { countWords } from "../utils/counting";
 
 function print(...params: any) {
   console.log("[Worker 🔨]:", ...params);
@@ -19,28 +19,27 @@ const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9\.\#]+/g;
 
 print("Hello World!");
 
-const parser = new WhatsAppChatParser();
+const parser = [new WhatsAppChatParseriOS()]
 
 onmessage = (m) => {
   const data: string = m.data[0] as string;
 
   postMessage(["StatusUpdate", "Parsing"]);
 
-  Promise.allSettled([
-    parser.parseRaw(data),
-  ]).then(async (results) => {
-    const errorMessages = results
-      .filter(r => r.status === "rejected")
-      .map(r => (r as PromiseRejectedResult).reason);
+  Promise.allSettled(parser.map(p => p.parseRaw(data)))
+    .then(async (results) => {
+      const errorMessages = results
+        .filter(r => r.status === "rejected")
+        .map(r => (r as PromiseRejectedResult).reason);
 
-    // find the first successful parser
-    const result = results.find(result => result.status === "fulfilled");
+      // find the first successful parser
+      const result = results.find(result => result.status === "fulfilled");
 
-    if (result)
-      return (result as PromiseFulfilledResult<WhatsAppMessage[]>).value;
+      if (result)
+        return (result as PromiseFulfilledResult<WhatsAppMessage[]>).value;
 
-    throw new Error("No parser could parse the file.\n" + errorMessages.join("\n---\n"));
-  })
+      throw new Error("No parser could parse the file.\n" + errorMessages.join("\n---\n"));
+    })
     .then((parsed) => {
       postMessage(["StatusUpdate", "Analysing"]);
       postMessage(["Messages", parsed]);
