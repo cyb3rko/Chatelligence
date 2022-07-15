@@ -1,7 +1,6 @@
 import moment from "moment";
-import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
-import { Parser } from "./Parser";
+import { Parser, type ParserResult } from "./Parser";
 
 export class WhatsAppChatParser extends Parser {
 
@@ -15,7 +14,7 @@ export class WhatsAppChatParser extends Parser {
 
 
     // TODO: parse "system" messages from groups (without sender).
-    async parseRaw(raw: string): Promise<WhatsAppMessage[]> {
+    async parseRaw(raw: string): Promise<ParserResult> {
         let parsedMessages = [];
         Array.from(raw.matchAll(this.rg_TimeAndName)).forEach((match) => {
             let m = match.at(0);
@@ -44,16 +43,17 @@ export class WhatsAppChatParser extends Parser {
             lastMessage.index + lastMessage.length + 1
         );
 
-        console.log(parsedMessages[0].time);
+        const os = raw.startsWith("[") ? "iOS" : "Android";
 
-        const dateString = (parsedMessages[0].time as string);
-
-        return parsedMessages.map((m) => ({
-            type: this.getMessageType(m.message), // TODO: parse special messages
-            sender: m.sender,
-            time: moment(m.time, "DD-MM-YYYY, HH:mm:ss").toDate(),
-            message: m.message,
-        }));
+        return {
+            os,
+            parsedMessages: parsedMessages.map((m) => ({
+                type: this.getMessageType(m.message), // TODO: parse special messages
+                sender: m.sender,
+                time: moment(m.time, "DD-MM-YYYY, HH:mm:ss").toDate(),
+                message: m.message,
+            }))
+        };
     }
 
     r_sticker = /\u200e(sticker omitted)/;
@@ -64,7 +64,7 @@ export class WhatsAppChatParser extends Parser {
     r_location = /\u200e(Location\: https\:\/\/maps\.google\.com\/\?q\=)\d+\.\d+\,\d+\.\d+/;
     r_contactCard = /\u200e(Contact card omitted)/;
     r_document = /\u200e(document omitted)/;
-    r_media = /\A\<(Media omitted)\>\Z/;
+    r_media = /^\<((Media omitted)|(Medien ausgeschlossen)){1}\>(\n?)$/;
 
     getMessageType(message: string): WhatsAppMessageType {
         if (message.match(this.r_media)) return WhatsAppMessageType.Media;

@@ -6,6 +6,7 @@
     import { top } from "./utils/array";
 
     let files;
+    let os;
 
     let messages: WhatsAppMessage[] = [];
     let analyis: {
@@ -45,6 +46,10 @@
 
             case "Analysis":
                 analyis = m.data[1];
+                break;
+
+            case "os":
+                os = m.data[1];
                 break;
 
             default:
@@ -91,6 +96,9 @@
                 {#if files && files[0]}
                     <p>
                         workerStatus: {workerStatus}
+                    </p>
+                    <p>
+                        os: {os}
                     </p>
                     <p>
                         {files[0].name} ({Math.round(files[0].size / 1024)} kb |

@@ -1,3 +1,4 @@
+import type { ParserResult } from "../parser/Parser";
 import { WhatsAppChatParser } from "../parser/WhatsAppChatParser";
 import type { Message } from "../types/Message.type";
 import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
@@ -35,8 +36,10 @@ onmessage = (m) => {
       // find the first successful parser
       const result = results.find(result => result.status === "fulfilled");
 
-      if (result)
-        return (result as PromiseFulfilledResult<WhatsAppMessage[]>).value;
+      if (result) {
+        postMessage(["os", (result as PromiseFulfilledResult<ParserResult>).value.os]);
+        return (result as PromiseFulfilledResult<ParserResult>).value.parsedMessages;
+      }
 
       throw new Error("No parser could parse the file.\n" + errorMessages?.join("\n---\n"));
     })
