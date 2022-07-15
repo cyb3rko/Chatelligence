@@ -29,7 +29,9 @@ onmessage = (m) => {
   Promise.allSettled([
     parser.parseRaw(data),
   ]).then(async (results) => {
-    const errorMessages = [];
+    const errorMessages = results
+      .filter(r => r.status === "rejected")
+      .map(r => (r as PromiseRejectedResult).reason);
 
     // find the first successful parser
     const result = results.find(result => result.status === "fulfilled");
