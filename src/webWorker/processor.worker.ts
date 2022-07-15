@@ -1,5 +1,7 @@
 import { WhatsAppChatParser } from "../parser/WhatsAppChatParser";
 import type { Message } from "../types/Message.type";
+import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
+import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 import { emptyArray } from "../untils/array";
 import { countWords } from "../untils/counting";
 
@@ -41,8 +43,9 @@ onmessage = (m) => {
 
 
 
-async function analyze(messages: Message[]) {
+async function analyze(messages: WhatsAppMessage[]) {
   let sender = new Set(messages.map((m) => m.sender));
+  const textMessages = messages.filter((m) => m.type == WhatsAppMessageType.Text);
 
   /*
    * SENDER STATS
@@ -61,7 +64,8 @@ async function analyze(messages: Message[]) {
 
   messages.forEach((m) => {
     senderStats[m.sender].messageCount++;
-    senderStats[m.sender].wordCount += countWords(m.message);
+    if (m.type == WhatsAppMessageType.Text)
+      senderStats[m.sender].wordCount += countWords(m.message);
     senderStats[m.sender].messageHours[m.time.getHours()]++;
   });
 
@@ -116,7 +120,7 @@ async function analyze(messages: Message[]) {
   postMessage(["StatusUpdate", "Analysing", "urls..."]);
 
   const urls = new Set();
-  messages.forEach(m => {
+  textMessages.forEach(m => {
     Array.from(m.message.matchAll(r_url)).forEach(url => {
       urls.add({ url: url[0], message: m });
     });
@@ -129,7 +133,7 @@ async function analyze(messages: Message[]) {
   postMessage(["StatusUpdate", "Analysing", "phone numbers..."]);
 
   const phoneNumbers = new Set();
-  messages.forEach(m => {
+  textMessages.forEach(m => {
     Array.from(m.message.matchAll(r_phoneNumbers)).forEach(phone => {
       phoneNumbers.add({ phoneNumber: phone[0].trim(), message: m });
     });
@@ -142,7 +146,7 @@ async function analyze(messages: Message[]) {
   postMessage(["StatusUpdate", "Analysing", "adresses..."]);
 
   const emailAdresses = new Set();
-  messages.forEach(m => {
+  textMessages.forEach(m => {
     Array.from(m.message.matchAll(r_email)).forEach(email => {
       emailAdresses.add({ email: email[0], message: m });
     })
@@ -155,7 +159,7 @@ async function analyze(messages: Message[]) {
   postMessage(["StatusUpdate", "Analysing", "emojis..."]);
 
   const emojis = new Map<string, number>();
-  messages.forEach(m => {
+  textMessages.forEach(m => {
     Array.from(m.message.matchAll(r_emoji)).forEach(emoji => {
       if (!['\u200D', '\u200E', '\u2019', "“", "„", "\u202C", "\u202A", "…", "—",].includes(emoji[0])) // Blacklist
         emojis.set(emoji[0], (emojis.get(emoji[0]) ?? 0) + 1);
@@ -169,7 +173,7 @@ async function analyze(messages: Message[]) {
   postMessage(["StatusUpdate", "Analysing", "social handles..."]);
 
   const socialHandles = new Set();
-  messages.forEach(m => {
+  textMessages.forEach(m => {
     Array.from(m.message.matchAll(r_socialHandles)).forEach(handle => {
       socialHandles.add({ handle: handle[0], message: m });
     })
@@ -180,7 +184,7 @@ async function analyze(messages: Message[]) {
     sender,
     senderStats: senderStatsArray,
     averageSenderStats,
-    wordStatistics: await analyzeWords(messages),
+    wordStatistics: await analyzeWords(textMessages),
     urls,
     phoneNumbers,
     emailAdresses,
