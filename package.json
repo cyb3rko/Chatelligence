@@ -38,9 +38,11 @@
   },
   "dependencies": {
     "@types/d3": "^7.4.0",
+    "@types/d3-force": "^3.0.3",
     "chart.js": "^3.8.0",
     "chartjs-plugin-deferred": "^2.0.0",
     "d3": "^7.6.1",
+    "d3-force": "^3.0.0",
     "moment": "^2.29.3",
     "sirv-cli": "^2.0.0",
     "svelte-routing": "^1.6.0"
