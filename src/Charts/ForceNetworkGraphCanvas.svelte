@@ -17,6 +17,8 @@
         forceCollide,
     } from "d3-force";
 
+    $: console.log(activeNode); // TODO: show closest relations as text (or highlight?)
+
     //import { event as currentEvent } from "d3-selection"; // Needed to get drag working, see: https://github.com/d3/d3/issues/2733
     let d3 = {
         zoom,
@@ -35,10 +37,39 @@
         forceCollide,
     };
 
+    function lerpColor(a: number, b: number, amount) {
+        var ar = a >> 16,
+            ag = (a >> 8) & 0xff,
+            ab = a & 0xff,
+            br = b >> 16,
+            bg = (b >> 8) & 0xff,
+            bb = b & 0xff,
+            rr = ar + amount * (br - ar),
+            rg = ag + amount * (bg - ag),
+            rb = ab + amount * (bb - ab);
+
+        return (
+            "#" +
+            (((1 << 24) + (rr << 16) + (rg << 8) + rb) | 0)
+                .toString(16)
+                .slice(1)
+        );
+    }
+
     export let graph: {
         nodes: { id: string; group: number }[];
-        links: { source: string; target: string; value: number }[];
+        links: {
+            source: string;
+            target: string;
+            value: number;
+            _value: number;
+        }[];
     };
+
+    let maxLink_Value = graph.links.reduce(
+        (acc, link) => Math.max(acc, link._value),
+        0,
+    );
 
     export let textColor = "#0f0f0f";
 
@@ -219,13 +250,16 @@
         context.translate(transform.x, transform.y);
         context.scale(transform.k, transform.k);
 
+        let alpha = 0;
         links.forEach((d) => {
             // TODO: color based on link value
             context.beginPath();
             context.moveTo(d.source.x, d.source.y);
             context.lineTo(d.target.x, d.target.y);
-            context.globalAlpha = 0.3;
-            context.strokeStyle = "#999";
+
+            alpha = graph.links[d.index]?._value / maxLink_Value ?? 0.1;
+            context.globalAlpha = alpha;
+            context.strokeStyle = lerpColor(0x999999, 0x33ccff, alpha);
             context.lineWidth = Math.cbrt(d.value) / 2;
             context.stroke();
             context.globalAlpha = 1;

@@ -194,6 +194,51 @@ async function analyze(messages: WhatsAppMessage[]) {
     })
   })
 
+  /**
+   * Relation of participants
+   */
+  /**
+   * key: source.target
+   * value: value of the relation
+   */
+  const participantsRelationMap = new Map<string, number>();
+  /**
+   * the authors of the last 3 messages
+   */
+  let t_last3sender = [];
+  let t_key;
+  textMessages.forEach(m => {
+    t_last3sender.forEach(s => {
+      if (s != m.sender) {
+        t_key = `${s}\uffff${m.sender}`;
+        participantsRelationMap.set(t_key, (participantsRelationMap.get(t_key) ?? 0) + 1);
+      }
+    }
+    );
+
+    t_last3sender.unshift(m.sender);
+    if (t_last3sender.length > 3)
+      t_last3sender.pop();
+  });
+
+  /**
+   * The value of the relation is the number of messages between the two participants with a maximum distance of 3 messages apparat
+   */
+  const participantsRelation = {
+    nodes: Array.from(sender.values()).map((s, i) => { return { id: s, group: i } }),
+    links: Array.from(participantsRelationMap.entries()).map(([key, value]) => {
+      const [source, target] = key.split("\uffff");
+      return { source, target, value, _value: value };
+    }).filter((l) => l.source != l.target),
+  };
+
+  const participantsRelationReduced = {
+    nodes: participantsRelation.nodes,
+    links: participantsRelation.links.filter(l => l._value > messages.length / (sender.size * 5)).map(l => {
+      return { source: l.source, target: l.target, value: Math.log10(l.value), _value: l.value };
+    }),
+  };
+
 
   return {
     sender,
@@ -203,6 +248,8 @@ async function analyze(messages: WhatsAppMessage[]) {
     urls,
     phoneNumbers,
     emailAdresses,
+    participantsRelation,
+    participantsRelationReduced,
     emojis,
     socialHandles,
   };
