@@ -70,7 +70,7 @@
             graph.links
                 .filter((link) => link.source == d.id || link.target == d.id)
                 .map((link) => link.value)
-                .reduce((a, b) => a + b),
+                .reduce((a, b) => a + b, 0),
             2,
         );
         if (d.id == "You") {
@@ -220,6 +220,7 @@
         context.scale(transform.k, transform.k);
 
         links.forEach((d) => {
+            // TODO: color based on link value
             context.beginPath();
             context.moveTo(d.source.x, d.source.y);
             context.lineTo(d.target.x, d.target.y);
