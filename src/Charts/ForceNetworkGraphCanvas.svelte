@@ -17,7 +17,7 @@
         forceCollide,
     } from "d3-force";
 
-    $: console.log(activeNode); // TODO: show closest relations as text (or highlight?)
+    $: activeNode && simulationUpdate();
 
     //import { event as currentEvent } from "d3-selection"; // Needed to get drag working, see: https://github.com/d3/d3/issues/2733
     let d3 = {
@@ -259,7 +259,18 @@
 
             alpha = graph.links[d.index]?._value / maxLink_Value ?? 0.1;
             context.globalAlpha = alpha;
-            context.strokeStyle = lerpColor(0x999999, 0x33ccff, alpha);
+
+            let linkBelongsToActiveNode =
+                graph.nodes[activeNode.index]?.id ==
+                    graph.links[d.index]?.target ||
+                graph.nodes[activeNode.index]?.id ==
+                    graph.links[d.index]?.source;
+
+            context.strokeStyle = lerpColor(
+                0x999999,
+                linkBelongsToActiveNode ? 0xffcc33 : 0x33ccff,
+                linkBelongsToActiveNode ? 1 : alpha,
+            );
             context.lineWidth = Math.cbrt(d.value) / 2;
             context.stroke();
             context.globalAlpha = 1;
