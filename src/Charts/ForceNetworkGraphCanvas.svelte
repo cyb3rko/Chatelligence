@@ -17,7 +17,16 @@
         forceCollide,
     } from "d3-force";
 
-    $: activeNode && simulationUpdate();
+    let activeNodeLinks: Link = [];
+
+    $: {
+        if (activeNode) {
+            activeNodeLinks = graph.links
+                .filter((link) => link.source === activeNode.id)
+                .sort((a, b) => a.value - b.value);
+            simulationUpdate();
+        }
+    }
 
     //import { event as currentEvent } from "d3-selection"; // Needed to get drag working, see: https://github.com/d3/d3/issues/2733
     let d3 = {
@@ -56,14 +65,16 @@
         );
     }
 
+    type Link = {
+        source: string;
+        target: string;
+        value: number;
+        _value: number;
+    }[];
+
     export let graph: {
         nodes: { id: string; group: number }[];
-        links: {
-            source: string;
-            target: string;
-            value: number;
-            _value: number;
-        }[];
+        links: Link;
     };
 
     let maxLink_Value = graph.links.reduce(
@@ -73,7 +84,7 @@
 
     export let textColor = "#0f0f0f";
 
-    let canvas;
+    let canvas: HTMLCanvasElement;
     let width = 500;
     let height = 600;
     let max = 100;
@@ -177,7 +188,7 @@
     }
     let showCard;
     let transform = d3.zoomIdentity;
-    let simulation, context;
+    let simulation, context: CanvasRenderingContext2D;
     let dpi = 1;
     onMount(() => {
         dpi = window.devicePixelRatio || 1;
@@ -362,6 +373,11 @@
                     <br />
                 {/each}
             {/if}
+            <linkList>
+                {#each activeNodeLinks as l}
+                    {l.target}: {l._value} <br />
+                {/each}
+            </linkList>
         </breadcrumb>
     {/if}
     <canvas use:fitToContainer bind:this={canvas} />
