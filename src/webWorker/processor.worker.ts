@@ -234,11 +234,13 @@ async function analyze(messages: WhatsAppMessage[]) {
 
   const participantsRelationReduced = {
     nodes: participantsRelation.nodes,
-    links: participantsRelation.links.filter(l => l._value > messages.length / (sender.size * 5)).map(l => {
+    links: participantsRelation.links.map(l => {
       return { source: l.source, target: l.target, value: Math.log10(l.value), _value: l.value };
     }),
   };
 
+  if (sender.size > 12)
+    participantsRelationReduced.links = participantsRelationReduced.links.filter(l => l._value > messages.length / (sender.size * 5));
 
   return {
     sender,
