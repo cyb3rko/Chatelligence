@@ -3,6 +3,7 @@
     import type { ForcedNetworkGraphInput } from "./Charts/ForcedNetworkGraphInput.type";
     import ForceNetworkGraphCanvas from "./Charts/ForceNetworkGraphCanvas.svelte";
     import ChatMessage from "./components/Message.svelte";
+    import NumberTransition from "./components/NumberTransition.svelte";
     import Evaluation from "./page/Evaluation.svelte";
     import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
     import { top } from "./utils/array";
@@ -108,9 +109,11 @@
                         os: {os}
                     </p>
                     <p>
-                        {files[0].name} ({Math.round(files[0].size / 1024)} kb |
-                        {messages.length}
-                        lines)
+                        {files[0].name} (<NumberTransition
+                            value={Math.round(files[0].size / 1024)}
+                        />} kb |
+                        <NumberTransition value={messages.length} />
+                        messages)
                     </p>
                     <p>
                         frist message (Skipped system message): <ChatMessage
@@ -130,7 +133,7 @@
                         participantsRelationReduced={analyis?.participantsRelationReduced}
                     />
                 {:else}
-                    <input type="file" bind:files accept=".txt" />
+                    <input type="file" bind:files accept="txt/json" />
                 {/if}
             </div>
         </Route>

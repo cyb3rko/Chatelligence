@@ -1,6 +1,6 @@
 <script lang="ts">
     export let value = 0;
-    export let time = 1000;
+    export let time = 500;
     export let steps = 10;
     export let numberFormatter: (n: number) => string = (n) => n.toFixed(0);
 

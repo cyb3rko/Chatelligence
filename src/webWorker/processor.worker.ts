@@ -1,3 +1,4 @@
+import { DiscordJSONParser } from "../parser/DiscordJSONParser";
 import type { ParserResult } from "../parser/Parser";
 import { WhatsAppChatParser } from "../parser/WhatsAppChatParser";
 import type { Message } from "../types/Message.type";
@@ -20,7 +21,7 @@ const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9\.\#]+/g;
 
 print("Hello World!");
 
-const parser = [new WhatsAppChatParser()]
+const parser = [new WhatsAppChatParser(), new DiscordJSONParser()]
 
 onmessage = (m) => {
   const data: string = m.data[0] as string;
