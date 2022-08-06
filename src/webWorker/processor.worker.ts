@@ -243,6 +243,15 @@ async function analyze(messages: WhatsAppMessage[]) {
   if (sender.size > 12)
     participantsRelationReduced.links = participantsRelationReduced.links.filter(l => l._value > messages.length / (sender.size * 5));
 
+  /**
+   * MessageTypes
+   */
+
+  const messageTypes = new Map<string, number>();
+  messages.forEach(m => {
+    messageTypes.set(m.type, (messageTypes.get(m.type) ?? 0) + 1);
+  });
+
   return {
     sender,
     senderStats: senderStatsArray,
@@ -255,6 +264,7 @@ async function analyze(messages: WhatsAppMessage[]) {
     participantsRelationReduced,
     emojis,
     socialHandles,
+    messageTypes,
   };
 }
 
