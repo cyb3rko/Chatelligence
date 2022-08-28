@@ -6,6 +6,7 @@ import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 import { emptyArray } from "../utils/array";
 import { countWords } from "../utils/counting";
+import { extractByRegex } from "../utils/processorUtils";
 
 function print(...params: any) {
   console.log("[Worker 🔨]:", ...params);
@@ -18,6 +19,7 @@ const r_phoneNumbers = /(^|\+|\s)+[0-9]{2,3}\s?[0-9]{2,14}\s?[0-9]{2,9}(\s|$|\u2
 const r_email = /(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g;
 const r_emoji = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
 const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9\.\#]+/g;
+const r_words = /\w+/g;
 
 print("Hello World!");
 
@@ -134,39 +136,21 @@ async function analyze(messages: WhatsAppMessage[]) {
    */
 
   postMessage(["StatusUpdate", "Analysing", "urls..."]);
-
-  const urls = new Set();
-  textMessages.forEach(m => {
-    Array.from(m.message.matchAll(r_url)).forEach(url => {
-      urls.add({ url: url[0], message: m });
-    });
-  })
+  const urls = extractByRegex(textMessages, r_url);
 
   /**
    * Phone numbers
    */
 
   postMessage(["StatusUpdate", "Analysing", "phone numbers..."]);
-
-  const phoneNumbers = new Set();
-  textMessages.forEach(m => {
-    Array.from(m.message.matchAll(r_phoneNumbers)).forEach(phone => {
-      phoneNumbers.add({ phoneNumber: phone[0].trim(), message: m });
-    });
-  })
+  const phoneNumbers = extractByRegex(textMessages, r_phoneNumbers, (n) => n.trim());
 
   /**
    * Email adresses
    */
 
-  postMessage(["StatusUpdate", "Analysing", "adresses..."]);
-
-  const emailAdresses = new Set();
-  textMessages.forEach(m => {
-    Array.from(m.message.matchAll(r_email)).forEach(email => {
-      emailAdresses.add({ email: email[0], message: m });
-    })
-  })
+  postMessage(["StatusUpdate", "Analysing", "Addresses..."]);
+  const emailAddresses = extractByRegex(textMessages, r_email);
 
   /**
    * Emojis
@@ -174,12 +158,9 @@ async function analyze(messages: WhatsAppMessage[]) {
 
   postMessage(["StatusUpdate", "Analysing", "emojis..."]);
 
-  const emojis = new Map<string, number>();
-  textMessages.forEach(m => {
-    Array.from(m.message.matchAll(r_emoji)).forEach(emoji => {
-      if (!['\u200D', '\u200E', '\u2019', "“", "„", "\u202C", "\u202A", "…", "—",].includes(emoji[0])) // Blacklist
-        emojis.set(emoji[0], (emojis.get(emoji[0]) ?? 0) + 1);
-    });
+  const emojis = extractByRegex(textMessages, r_emoji);
+  emojis.filter(e => {
+    return !['\u200D', '\u200E', '\u2019', "“", "„", "\u202C", "\u202A", "…", "—",].includes(e.extracted);
   });
 
   /**
@@ -188,12 +169,7 @@ async function analyze(messages: WhatsAppMessage[]) {
 
   postMessage(["StatusUpdate", "Analysing", "social handles..."]);
 
-  const socialHandles = new Set();
-  textMessages.forEach(m => {
-    Array.from(m.message.matchAll(r_socialHandles)).forEach(handle => {
-      socialHandles.add({ handle: handle[0], message: m });
-    })
-  })
+  const socialHandles = extractByRegex(textMessages, r_socialHandles, (h) => h.trim());
 
   /**
    * Relation of participants
@@ -252,6 +228,12 @@ async function analyze(messages: WhatsAppMessage[]) {
     messageTypes.set(m.type, (messageTypes.get(m.type) ?? 0) + 1);
   });
 
+  /**
+   * Words
+   */
+
+  const words = extractByRegex(textMessages, r_words);
+
   return {
     sender,
     senderStats: senderStatsArray,
@@ -259,12 +241,13 @@ async function analyze(messages: WhatsAppMessage[]) {
     wordStatistics: await analyzeWords(textMessages),
     urls,
     phoneNumbers,
-    emailAdresses,
+    emailAddresses,
     participantsRelation,
     participantsRelationReduced,
     emojis,
     socialHandles,
     messageTypes,
+    words
   };
 }
 
