@@ -6,7 +6,9 @@ import type { Message } from "../types/Message.type";
 import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 import { emptyArray } from "../utils/array";
+import { Counter } from "../utils/Counter";
 import { countWords } from "../utils/counting";
+import type { Extraction } from "../utils/processor.types";
 import { extractByRegex } from "../utils/processorUtils";
 
 function print(...params: any) {
@@ -21,6 +23,7 @@ const r_email = /(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-z0-9!#$%&'*+/=?^_`
 // 🇺  🇳  🇮  🇨  🇴  🇩  🇪    🇷  🇪  🇵  🇴  🇷  🇹  https://unicode.org/reports/tr51/
 const r_emoji = /(?=\D)[\p{Emoji}][\p{Emoji_Modifier}\u200D\u2640-\u2642]*(\u200D\p{Emoji})+/ug
 const r_emojiModifier = /[\p{Emoji_Modifier}\u200D\u2640-\u2642]/ug;
+const r_emojiModifierGender = /(\u2640|\u2642)/;
 const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9\.\#]+/g;
 const r_words = /\w+/g;
 
@@ -247,9 +250,64 @@ async function analyze(messages: WhatsAppMessage[]) {
     participantsRelationReduced,
     emojis,
     emojiModifiers,
+    emojiModifierBasedSenderStats: emojiModifierBasedSenderStats(Array.from(sender), emojiModifiers),
     socialHandles,
     messageTypes,
     words
+  };
+}
+
+function emojiModifierBasedSenderStats(senders: string[], emojisModifiers: Extraction[]) {
+  const senderMap = new Map(senders.map(s => {
+    return [s, new Map()]
+  }));
+
+  const genderAssumption = new Counter(senders);
+  const genderVersatility = new Counter(senders);
+
+  emojisModifiers.forEach(modifier => {
+    modifier.mentions.forEach(mention => {
+      let sendersEmojiMap = senderMap.get(mention.sender);
+      if (!sendersEmojiMap.get(modifier.extracted))
+        sendersEmojiMap.set(modifier.extracted, [])
+
+      sendersEmojiMap.get(modifier.extracted).push(mention);
+
+      if (r_emojiModifierGender.test(modifier.extracted)) {
+        genderVersatility.increase(mention.sender);
+
+        switch (modifier.extracted) {
+          case "♂":
+            genderAssumption.decrease(mention.sender);
+            break;
+
+          case "♀":
+            genderAssumption.increase(mention.sender);
+            break;
+
+          default:
+            break;
+        }
+      }
+    });
+  });
+
+  senders.forEach(s => {
+    genderVersatility.decrease(s, Math.abs(genderAssumption.get(s)))
+  });
+
+  return {
+    senderMap,
+    /**
+     * value < 0 male
+     *
+     * value > 0 female
+     */
+    genderAssumption,
+    /**
+     * the larger the count the bigger the versatility
+     */
+    genderVersatility
   };
 }
 
