@@ -7,6 +7,7 @@
     import Evaluation from "./page/Evaluation.svelte";
     import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
     import { top } from "./utils/array";
+    import type { Extraction } from "./utils/processor.types";
 
     let files;
     /**
@@ -33,7 +34,8 @@
             totalMessageHours: number[];
             avgMessageHours: number[];
         };
-        emojis: Map<string, number>;
+        emojis: Extraction[];
+        emojiModifiers: Extraction[];
         participantsRelation: ForcedNetworkGraphInput;
         participantsRelationReduced: ForcedNetworkGraphInput;
     };
@@ -124,11 +126,12 @@
                         senderStats={analyis?.senderStats}
                         {topMessanger}
                         emojsCounts={analyis?.emojis
-                            ? Array.from(analyis?.emojis?.entries()).map(
-                                  (e) => {
-                                      return { value: e[1], label: e[0] };
-                                  },
-                              )
+                            ? analyis?.emojis.map((e) => {
+                                  return {
+                                      label: e.extracted,
+                                      value: e.mentions.length,
+                                  };
+                              })
                             : []}
                         participantsRelationReduced={analyis?.participantsRelationReduced}
                     />
