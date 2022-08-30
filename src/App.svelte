@@ -7,7 +7,9 @@
     import Evaluation from "./page/Evaluation.svelte";
     import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
     import { top } from "./utils/array";
+    import type { Counter } from "./utils/Counter";
     import type { Extraction } from "./utils/processor.types";
+    import type { analyze } from "./webWorker/processor.worker";
 
     let files;
     /**
@@ -16,29 +18,7 @@
     let os;
 
     let messages: WhatsAppMessage[] = [];
-    let analyis: {
-        sender: Set<string>;
-        senderStats: {
-            sender: string;
-            messageCount: any;
-            wordCount: any;
-            wordsPerMessage: number;
-            messageHours: number[];
-        }[];
-        averageSenderStats: {
-            totalMessageCount: number;
-            avgMessageCount: number;
-            totalWordCount: number;
-            avgWordCount: number;
-            wordsPerMessage: number;
-            totalMessageHours: number[];
-            avgMessageHours: number[];
-        };
-        emojis: Extraction[];
-        emojiModifiers: Extraction[];
-        participantsRelation: ForcedNetworkGraphInput;
-        participantsRelationReduced: ForcedNetworkGraphInput;
-    };
+    let analyis: Awaited<ReturnType<typeof analyze>>;
 
     const worker = new Worker("build/processor.worker.js");
     let workerStatus;
@@ -122,19 +102,20 @@
                             message={messages[1]}
                         />
                     </p>
-                    <Evaluation
-                        senderStats={analyis?.senderStats}
-                        {topMessanger}
-                        emojsCounts={analyis?.emojis
-                            ? analyis?.emojis.map((e) => {
-                                  return {
-                                      label: e.extracted,
-                                      value: e.mentions.length,
-                                  };
-                              })
-                            : []}
-                        participantsRelationReduced={analyis?.participantsRelationReduced}
-                    />
+                    <div />
+                    {#if analyis}
+                        <Evaluation
+                            senderStats={analyis.senderStats}
+                            {topMessanger}
+                            emojsCounts={analyis.emojis.map((e) => {
+                                return {
+                                    label: e.extracted,
+                                    value: e.mentions.length,
+                                };
+                            })}
+                            participantsRelationReduced={analyis?.participantsRelationReduced}
+                        />
+                    {/if}
                 {:else}
                     <input type="file" bind:files accept="txt/json" />
                 {/if}

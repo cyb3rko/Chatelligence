@@ -67,7 +67,7 @@ onmessage = (m) => {
 
 
 
-async function analyze(messages: WhatsAppMessage[]) {
+export async function analyze(messages: WhatsAppMessage[]) {
   let sender = new Set(messages.map((m) => m.sender));
   const textMessages = messages.filter((m) => m.type == WhatsAppMessageType.Text);
 
