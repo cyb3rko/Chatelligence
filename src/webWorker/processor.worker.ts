@@ -24,6 +24,14 @@ const r_email = /(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-z0-9!#$%&'*+/=?^_`
 const r_emoji = /(?=\D)(?=[^\*])[\p{Emoji}][\p{Emoji_Modifier}\u200D\u2640-\u2642]*(\u200D\p{Emoji})*/ug
 const r_emojiModifier = /[\p{Emoji_Modifier}\u200D\u2640-\u2642]/ug;
 const r_emojiModifierGender = /(\u2640|\u2642)/;
+/**
+ * Only emojis that are explicitly male (Without an modifier)
+ */
+const r_emojiMale = /👴/ug;
+/**
+ * Only emojis that are explicitly female. (Without an modifier)
+ */
+const r_emojiFemale = /👵/ug;
 const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9\.\#]+/g;
 const r_words = /\w+/g;
 
@@ -250,14 +258,14 @@ export async function analyze(messages: WhatsAppMessage[]) {
     participantsRelationReduced,
     emojis,
     emojiModifiers,
-    emojiModifierBasedSenderStats: emojiModifierBasedSenderStats(Array.from(sender), emojiModifiers),
+    emojiModifierBasedSenderStats: emojiBasedSenderStats(Array.from(sender), emojiModifiers, emojis),
     socialHandles,
     messageTypes,
     words
   };
 }
 
-function emojiModifierBasedSenderStats(senders: string[], emojisModifiers: Extraction[]) {
+function emojiBasedSenderStats(senders: string[], emojisModifiers: Extraction[], emojis: Extraction[]) {
   const senderMap = new Map(senders.map(s => {
     return [s, new Map()]
   }));
@@ -291,6 +299,20 @@ function emojiModifierBasedSenderStats(senders: string[], emojisModifiers: Extra
       }
     });
   });
+
+  emojis.forEach(e => {
+    if (r_emojiMale.test(e.extracted)) {
+      e.mentions.forEach(m => {
+        genderVersatility.increase(m.sender);
+        genderAssumption.decrease(m.sender);
+      })
+    } else if (r_emojiFemale.test(e.extracted)) {
+      e.mentions.forEach(m => {
+        genderVersatility.increase(m.sender);
+        genderAssumption.increase(m.sender);
+      })
+    }
+  })
 
   senders.forEach(s => {
     genderVersatility.decrease(s, Math.abs(genderAssumption.get(s)))
