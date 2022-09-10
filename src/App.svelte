@@ -18,7 +18,7 @@
     let os;
 
     let messages: WhatsAppMessage[] = [];
-    let analyis: Awaited<ReturnType<typeof analyze>>;
+    let analysis: Awaited<ReturnType<typeof analyze>>;
 
     const worker = new Worker("build/processor.worker.js");
     let workerStatus;
@@ -35,7 +35,7 @@
                 break;
 
             case "Analysis":
-                analyis = m.data[1];
+                analysis = m.data[1];
                 break;
 
             case "os":
@@ -69,8 +69,8 @@
     }[];
 
     $: {
-        topMessanger = analyis?.senderStats
-            ? top(analyis.senderStats, 10, "messageCount")
+        topMessanger = analysis?.senderStats
+            ? top(analysis.senderStats, 10, "messageCount")
             : [];
     }
 </script>
@@ -103,17 +103,17 @@
                         />
                     </p>
                     <div />
-                    {#if analyis}
+                    {#if analysis}
                         <Evaluation
-                            senderStats={analyis.senderStats}
+                            senderStats={analysis.senderStats}
                             {topMessanger}
-                            emojsCounts={analyis.emojis.map((e) => {
+                            emojsCounts={analysis.emojis.map((e) => {
                                 return {
                                     label: e.extracted,
                                     value: e.mentions.length,
                                 };
                             })}
-                            participantsRelationReduced={analyis?.participantsRelationReduced}
+                            participantsRelationReduced={analysis?.participantsRelationReduced}
                         />
                     {/if}
                 {:else}
