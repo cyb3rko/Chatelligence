@@ -1,10 +1,13 @@
 <script lang="ts">
     import BarChart from "../Charts/BarChart.svelte";
     import BubbleChart from "../Charts/BubbleChart.svelte";
+    import ExtractionsTable from "../Charts/ExtractionsTable.svelte";
     import type { ForcedNetworkGraphInput } from "../Charts/ForcedNetworkGraphInput.type";
     import ForceNetworkGraphCanvas from "../Charts/ForceNetworkGraphCanvas.svelte";
     import MessageHoursBarChart from "../Charts/MessageHoursBarChart.svelte";
+    import type { analyze } from "../webWorker/processor.worker";
 
+    export let analysis: Awaited<ReturnType<typeof analyze>>;
     export let senderStats;
     export let topMessanger;
     export let emojsCounts;
@@ -23,6 +26,12 @@
                 datasets: [{ data: topMessanger.map((m) => m.messageCount) }],
             }}
         />
+
+        <h2>Emojis</h2>
+        <ExtractionsTable extractions={analysis.emojis} title="Emoji" />
+
+        <h2>Words</h2>
+        <ExtractionsTable extractions={analysis.words} title="Word" />
 
         <h2>Emojis</h2>
         <div style="width: calc(100% - 16px);">

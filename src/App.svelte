@@ -70,7 +70,7 @@
 
     $: {
         topMessanger = analysis?.senderStats
-            ? top(analysis.senderStats, 10, "messageCount")
+            ? top(analysis.senderStats, 10, 0, "messageCount")
             : [];
     }
 </script>
@@ -105,6 +105,7 @@
                     <div />
                     {#if analysis}
                         <Evaluation
+                            {analysis}
                             senderStats={analysis.senderStats}
                             {topMessanger}
                             emojsCounts={analysis.emojis.map((e) => {

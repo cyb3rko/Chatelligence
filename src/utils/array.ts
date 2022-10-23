@@ -10,9 +10,9 @@ export function emptyArray<T>(length: number, fillValue?: T): T[] {
  * @param highest Wheather lower or higher values should be on top. True for highest on top.
  * @returns 
  */
-export function top<T>(what: Array<T>, count: number, ofWhat: keyof T, highest: boolean = true): T[] {
+export function top<T>(what: Array<T>, count: number, offset: number, ofWhat: keyof T, highest: boolean = true): T[] {
     const sorted = [...what].sort((a, b) => a[ofWhat] < b[ofWhat] ? 1 : -1);
     if (!highest) sorted.reverse();
-    sorted.length = sorted.length > count ? count : sorted.length;
-    return sorted;
+
+    return sorted.slice(offset, count + offset);;
 }

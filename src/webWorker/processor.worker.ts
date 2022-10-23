@@ -1,4 +1,3 @@
-import { text } from "d3";
 import { DiscordJSONParser } from "../parser/DiscordJSONParser";
 import type { ParserResult } from "../parser/Parser";
 import { WhatsAppChatParser } from "../parser/WhatsAppChatParser";
