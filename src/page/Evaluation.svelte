@@ -8,7 +8,7 @@
     import type { analyze } from "../webWorker/processor.worker";
 
     export let analysis: Awaited<ReturnType<typeof analyze>>;
-    export let senderStats;
+    export let aggregatedSenderStats;
     export let topMessanger;
     export let emojsCounts;
     export let participantsRelationReduced: ForcedNetworkGraphInput;
@@ -17,8 +17,8 @@
 <evaluation>
     <h2>evaluation</h2>
 
-    {#if senderStats && topMessanger}
-        <MessageHoursBarChart {senderStats} />
+    {#if aggregatedSenderStats && topMessanger}
+        <MessageHoursBarChart senderStats={aggregatedSenderStats} />
 
         <BarChart
             data={{

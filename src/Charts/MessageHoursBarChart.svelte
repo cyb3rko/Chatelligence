@@ -1,9 +1,10 @@
 <script lang="ts">
+    import { NAME_OTHER } from "../utils/array";
     import BarChart from "./BarChart.svelte";
 
     export let senderStats;
 
-    let exampleData = {
+    let displayData = {
         labels: [
             "0 - 0:59",
             "1",
@@ -35,7 +36,7 @@
 
     $: {
         if (senderStats) {
-            let x = exampleData;
+            let x = displayData;
 
             x.datasets = [];
 
@@ -43,6 +44,7 @@
                 ...senderStats.map((s) => {
                     return {
                         label: s.sender,
+                        hidden: s.sender == NAME_OTHER,
                         data: s.messageHours.map((v) => {
                             return v;
                         }),
@@ -53,9 +55,9 @@
                 }),
             );
             console.log(x);
-            exampleData = x;
+            displayData = x;
         }
     }
 </script>
 
-<BarChart data={exampleData} />
+<BarChart data={displayData} />

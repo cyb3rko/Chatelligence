@@ -6,7 +6,7 @@
     import NumberTransition from "./components/NumberTransition.svelte";
     import Evaluation from "./page/Evaluation.svelte";
     import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
-    import { top } from "./utils/array";
+    import { aggregate, top } from "./utils/array";
     import type { Counter } from "./utils/Counter";
     import type { Extraction } from "./utils/processor.types";
     import type { analyze } from "./webWorker/processor.worker";
@@ -68,9 +68,26 @@
         messageHours: number[];
     }[];
 
+    let aggregatedSenderStats: typeof analysis.senderStats;
+
     $: {
         topMessanger = analysis?.senderStats
             ? top(analysis.senderStats, 10, 0, "messageCount")
+            : [];
+
+        aggregatedSenderStats = analysis?.senderStats
+            ? aggregate(
+                  analysis.senderStats,
+                  10,
+                  "messageCount",
+                  "sender",
+                  true,
+                  (a, e) => {
+                      a.messageHours.forEach((v, i) => {
+                          a.messageHours[i] += e.messageHours[i] ?? 0;
+                      });
+                  },
+              )
             : [];
     }
 </script>
@@ -106,7 +123,7 @@
                     {#if analysis}
                         <Evaluation
                             {analysis}
-                            senderStats={analysis.senderStats}
+                            {aggregatedSenderStats}
                             {topMessanger}
                             emojsCounts={analysis.emojis.map((e) => {
                                 return {
