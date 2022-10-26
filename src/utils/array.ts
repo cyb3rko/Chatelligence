@@ -14,5 +14,30 @@ export function top<T>(what: Array<T>, count: number, offset: number, ofWhat: ke
     const sorted = [...what].sort((a, b) => a[ofWhat] < b[ofWhat] ? 1 : -1);
     if (!highest) sorted.reverse();
 
-    return sorted.slice(offset, count + offset);;
+    return sorted.slice(offset, count + offset);
+}
+
+export const NAME_OTHER = "other;"
+
+/**
+ * @param what
+ * @param untouchedCount Number of ungrouped entries
+ * @param name This field will be renamed to ${NAME_OTHER} on the aggregated entry
+ */
+export function aggregate<T>(what: Array<T>, untouchedCount: number, ofWhat: keyof T, name: keyof T, reversed: boolean, howToAggregate = (aggregation: T, entry: T) => { aggregation[ofWhat] += <any>entry[ofWhat] }) {
+    const sorted = [...what].sort((a, b) => a[ofWhat] < b[ofWhat] ? 1 : -1);
+    if (!reversed) sorted.reverse();
+
+    if (sorted.length < untouchedCount)
+        return sorted;
+
+    const top = sorted.slice(0, untouchedCount);
+    const others = sorted.slice(untouchedCount);
+
+    const aggregated = others[0];
+    aggregated[name] = <any>NAME_OTHER;
+    others.slice(1).forEach(entry => howToAggregate(aggregated, entry));
+    top.push(aggregated);
+
+    return top;
 }
