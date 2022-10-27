@@ -43,7 +43,7 @@
             <BubbleChart data={emojsCounts} />
         </div>
 
-        <div style="height: 50vh; background-color: aliceblue;">
+        <div style="height: 50vh; background-color: #262627;">
             <ForceNetworkGraphCanvas graph={participantsRelationReduced} />
         </div>
     {/if}

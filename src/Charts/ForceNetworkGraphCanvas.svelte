@@ -82,7 +82,7 @@
         0,
     );
 
-    export let textColor = "#0f0f0f";
+    export let textColor = "#fafafa";
 
     let canvas: HTMLCanvasElement;
     let width = 500;
