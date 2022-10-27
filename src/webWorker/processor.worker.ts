@@ -218,7 +218,7 @@ export async function analyze(messages: WhatsAppMessage[]) {
    * The value of the relation is the number of messages between the two participants with a maximum distance of 3 messages apparat
    */
   const participantsRelation = {
-    nodes: Array.from(sender.values()).map((s, i) => { return { id: s, group: i } }),
+    nodes: Array.from(senderStatsArray.values()).map((s, i) => { return { id: s.sender, group: i, color: s.color } }),
     links: Array.from(participantsRelationMap.entries()).map(([key, value]) => {
       const [source, target] = key.split("\uffff");
       return { source, target, value, _value: value };

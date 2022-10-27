@@ -122,7 +122,7 @@
         return Object.create(d);
     });
 
-    function groupColour(context, d) {
+    function nodeColor(context, d) {
         let nodesize = 2 + Math.sqrt(d.size) / 5;
         let radgrad = context.createRadialGradient(
             d.x,
@@ -132,59 +132,11 @@
             d.y,
             nodesize,
         );
-        radgrad.addColorStop(0, "#01abfc");
-        radgrad.addColorStop(0.1, "#01abfc");
-        radgrad.addColorStop(1, "#01abfc00");
+        radgrad.addColorStop(0, d.color + "BB");
+        radgrad.addColorStop(0.9, d.color + "BB");
+        radgrad.addColorStop(1, d.color + "00");
 
-        let radgrad2 = context.createRadialGradient(
-            d.x,
-            d.y,
-            nodesize / 3,
-            d.x,
-            d.y,
-            nodesize,
-        );
-        radgrad2.addColorStop(0, "#7A17F6");
-        radgrad2.addColorStop(0.1, "#7A17F6");
-        radgrad2.addColorStop(1, "#7A17F600");
-
-        let radgrad3 = context.createRadialGradient(
-            d.x,
-            d.y,
-            nodesize / 3,
-            d.x,
-            d.y,
-            nodesize,
-        );
-        radgrad3.addColorStop(0, "#B635E3");
-        radgrad3.addColorStop(0.1, "#B635E3");
-        radgrad3.addColorStop(1, "#B635E300");
-
-        let radgrad4 = context.createRadialGradient(
-            d.x,
-            d.y,
-            nodesize / 3,
-            d.x,
-            d.y,
-            nodesize,
-        );
-        radgrad4.addColorStop(0, "#E4158B");
-        radgrad4.addColorStop(0.1, "#E4158B");
-        radgrad4.addColorStop(1, "#E4158B00");
-
-        let radgrad5 = context.createRadialGradient(
-            d.x,
-            d.y,
-            nodesize / 3,
-            d.x,
-            d.y,
-            nodesize,
-        );
-        radgrad4.addColorStop(0, "#F9123B");
-        radgrad4.addColorStop(0.1, "#F9123B");
-        radgrad4.addColorStop(1, "#F9123B00");
-        let radgrads = [radgrad, radgrad2, radgrad3, radgrad4, radgrad5];
-        return radgrads[d.group % 5];
+        return radgrad;
     }
     let showCard;
     let transform = d3.zoomIdentity;
@@ -293,7 +245,7 @@
             context.strokeStyle = "transparent";
             context.lineWidth = 1.5;
             context.stroke();
-            context.fillStyle = groupColour(context, d);
+            context.fillStyle = nodeColor(context, d);
             context.fill();
             if (d.size > max / 50) {
                 context.fillStyle = textColor;

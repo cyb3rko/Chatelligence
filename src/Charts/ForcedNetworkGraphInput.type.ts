@@ -2,6 +2,7 @@ export type ForcedNetworkGraphInput = {
     nodes: {
         id: string;
         group: number;
+        color: string;
     }[];
     links: {
         source: string;
