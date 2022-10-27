@@ -35,6 +35,9 @@ const r_emojiFemale = /👵/ug;
 const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9\.\#]+/g;
 const r_words = /\w+/g;
 
+export type Analysis = Awaited<ReturnType<typeof analyze>>;
+export type SenderStats = Analysis["senderStats"];
+
 print("Hello World!");
 
 const parser = [new WhatsAppChatParser(), new DiscordJSONParser()]
