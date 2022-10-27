@@ -11,7 +11,7 @@ const threeOldestSolution = [testArray[2], testArray[1], testArray[0]];
 const alphabeticallyOrderedSolution = testArray;
 
 test('top function (order by number)', () => {
-    let threeOldest = top([...testArray], 3, "age");
+    let threeOldest = top([...testArray], 0, 3, "age");
 
     expect(threeOldest.length).toEqual(3);
     expect(threeOldest).toEqual(threeOldestSolution);
@@ -19,7 +19,7 @@ test('top function (order by number)', () => {
 
 
 test('top function (order by string)', () => {
-    let alphabeticallyOrdered = top([...testArray], 4, "name", false);
+    let alphabeticallyOrdered = top([...testArray], 0, 4, "name", false);
 
     expect(alphabeticallyOrdered.length).toEqual(4);
     expect(alphabeticallyOrdered).toEqual(alphabeticallyOrderedSolution);
