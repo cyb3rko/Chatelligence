@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { set_now } from "svelte/internal";
     import BarChart from "../Charts/BarChart.svelte";
     import BubbleChart from "../Charts/BubbleChart.svelte";
     import ExtractionsTable from "../Charts/ExtractionsTable.svelte";
@@ -23,7 +24,12 @@
         <BarChart
             data={{
                 labels: topMessanger.map((m) => m.sender),
-                datasets: [{ data: topMessanger.map((m) => m.messageCount) }],
+                datasets: [
+                    {
+                        data: topMessanger.map((m) => m.messageCount),
+                        backgroundColor: topMessanger.map((m) => m.color),
+                    },
+                ],
             }}
         />
 
