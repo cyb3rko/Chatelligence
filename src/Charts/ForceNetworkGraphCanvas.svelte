@@ -297,6 +297,7 @@
 
     function resize() {
         ({ width, height } = canvas);
+        fitToContainer(canvas);
     }
     function fitToContainer(node) {
         dpi = window.devicePixelRatio || 1;
