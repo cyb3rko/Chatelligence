@@ -5,6 +5,7 @@ import type { Message } from "../types/Message.type";
 import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
 import { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
 import { emptyArray } from "../utils/array";
+import { generateColorFromString } from "../utils/color";
 import { Counter } from "../utils/Counter";
 import { countWords } from "../utils/counting";
 import type { Extraction } from "../utils/processor.types";
@@ -107,6 +108,7 @@ export async function analyze(messages: WhatsAppMessage[]) {
       wordCount: senderStats[s].wordCount,
       wordsPerMessage: senderStats[s].wordCount / senderStats[s].messageCount,
       messageHours: senderStats[s].messageHours as number[],
+      color: generateColorFromString(s)
     };
   });
 
