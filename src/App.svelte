@@ -9,7 +9,7 @@
     import { aggregate, top } from "./utils/array";
     import type { Counter } from "./utils/Counter";
     import type { Extraction } from "./utils/processor.types";
-    import type { analyze } from "./webWorker/processor.worker";
+    import type { analyze, SenderStats } from "./webWorker/processor.worker";
 
     let files;
     /**
@@ -60,15 +60,8 @@
         }
     }
 
-    let topMessanger: {
-        sender: string;
-        messageCount: any;
-        wordCount: any;
-        wordsPerMessage: number;
-        messageHours: number[];
-    }[];
-
-    let aggregatedSenderStats: typeof analysis.senderStats;
+    let topMessanger: SenderStats;
+    let aggregatedSenderStats: SenderStats;
 
     $: {
         topMessanger = analysis?.senderStats

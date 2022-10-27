@@ -5,11 +5,11 @@
     import type { ForcedNetworkGraphInput } from "../Charts/ForcedNetworkGraphInput.type";
     import ForceNetworkGraphCanvas from "../Charts/ForceNetworkGraphCanvas.svelte";
     import MessageHoursBarChart from "../Charts/MessageHoursBarChart.svelte";
-    import type { analyze } from "../webWorker/processor.worker";
+    import type { Analysis, SenderStats } from "../webWorker/processor.worker";
 
-    export let analysis: Awaited<ReturnType<typeof analyze>>;
+    export let analysis: Analysis;
     export let aggregatedSenderStats;
-    export let topMessanger;
+    export let topMessanger: SenderStats;
     export let emojsCounts;
     export let participantsRelationReduced: ForcedNetworkGraphInput;
 </script>
