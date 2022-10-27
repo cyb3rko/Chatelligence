@@ -1,14 +1,11 @@
 <script lang="ts">
-    import { Router, Link, Route } from "svelte-routing";
-    import type { ForcedNetworkGraphInput } from "./Charts/ForcedNetworkGraphInput.type";
-    import ForceNetworkGraphCanvas from "./Charts/ForceNetworkGraphCanvas.svelte";
+    import { Router, Route, navigate } from "svelte-routing";
     import ChatMessage from "./components/Message.svelte";
     import NumberTransition from "./components/NumberTransition.svelte";
+    import { StoreAnalysis } from "./DataStore";
     import Evaluation from "./page/Evaluation.svelte";
     import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
     import { aggregate, top } from "./utils/array";
-    import type { Counter } from "./utils/Counter";
-    import type { Extraction } from "./utils/processor.types";
     import type { analyze, SenderStats } from "./webWorker/processor.worker";
 
     let files;
@@ -20,7 +17,7 @@
     let messages: WhatsAppMessage[] = [];
     let analysis: Awaited<ReturnType<typeof analyze>>;
 
-    const worker = new Worker("build/processor.worker.js");
+    const worker = new Worker("/build/processor.worker.js");
     let workerStatus;
 
     worker.onmessage = (m) => {
@@ -35,7 +32,10 @@
                 break;
 
             case "Analysis":
+                worker.terminate();
                 analysis = m.data[1];
+                StoreAnalysis.set(m.data[1]);
+                navigate("/app/overview", { replace: true });
                 break;
 
             case "os":
@@ -114,18 +114,22 @@
                     </p>
                     <div />
                     {#if analysis}
-                        <Evaluation
-                            {analysis}
-                            {aggregatedSenderStats}
-                            {topMessanger}
-                            emojsCounts={analysis.emojis.map((e) => {
-                                return {
-                                    label: e.extracted,
-                                    value: e.mentions.length,
-                                };
-                            })}
-                            participantsRelationReduced={analysis?.participantsRelationReduced}
-                        />
+                        <Router>
+                            <Route path="/overview">
+                                <Evaluation
+                                    {analysis}
+                                    {aggregatedSenderStats}
+                                    {topMessanger}
+                                    emojsCounts={analysis.emojis.map((e) => {
+                                        return {
+                                            label: e.extracted,
+                                            value: e.mentions.length,
+                                        };
+                                    })}
+                                    participantsRelationReduced={analysis?.participantsRelationReduced}
+                                />
+                            </Route>
+                        </Router>
                     {/if}
                 {:else}
                     <input type="file" bind:files accept="txt/json" />
