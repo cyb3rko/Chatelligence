@@ -1,8 +1,9 @@
 <script lang="ts">
     import { NAME_OTHER } from "../utils/array";
+    import type { SenderStats } from "../webWorker/processor.worker";
     import BarChart from "./BarChart.svelte";
 
-    export let senderStats;
+    export let senderStats: SenderStats;
 
     let displayData = {
         labels: [
@@ -48,9 +49,7 @@
                         data: s.messageHours.map((v) => {
                             return v;
                         }),
-                        backgroundColor:
-                            "#" +
-                            Math.floor(Math.random() * 16777215).toString(16),
+                        backgroundColor: s.color,
                     };
                 }),
             );
