@@ -30,6 +30,7 @@
                     },
                 ],
             }}
+            showLegend={false}
         />
 
         <h2>Emojis</h2>
