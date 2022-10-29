@@ -14,6 +14,8 @@
         }[]
     > = { datasets: [] };
 
+    export let showLegend: boolean = true;
+
     onMount(() => {
         Chart.register(...registerables);
 
@@ -22,6 +24,11 @@
             type: "bar",
             data: data,
             options: {
+                plugins: {
+                    legend: {
+                        display: showLegend,
+                    },
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
