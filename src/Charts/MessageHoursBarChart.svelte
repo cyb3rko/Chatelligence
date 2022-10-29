@@ -46,9 +46,7 @@
                     return {
                         label: s.sender,
                         hidden: s.sender == NAME_OTHER,
-                        data: s.messageHours.map((v) => {
-                            return v;
-                        }),
+                        data: s.messageHours,
                         backgroundColor: s.color,
                     };
                 }),
