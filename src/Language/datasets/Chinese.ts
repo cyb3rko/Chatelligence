@@ -1,4 +1,4 @@
-[
+export default [
     "一",
     "人",
     "里",

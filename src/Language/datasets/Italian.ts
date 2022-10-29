@@ -1,4 +1,4 @@
-[
+export default [
     "come",
     "io",
     "il suo",

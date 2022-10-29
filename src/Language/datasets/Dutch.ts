@@ -1,4 +1,4 @@
-[
+export default [
     "als",
     "I",
     "zijn",

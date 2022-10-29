@@ -1,4 +1,4 @@
-[
+export default [
     "wie",
     "ich",
     "seine",

@@ -1,14 +1,14 @@
-import Chinese from './datasets/Chinese.json';
-import Czech from './datasets/Czech.json';
-import Danish from './datasets/Danish.json';
-import Dutch from './datasets/Dutch.json';
-import English from './datasets/English.json';
-import French from './datasets/French.json';
-import German from './datasets/German.json';
-import Greek from './datasets/Greek.json';
-import Hindi from './datasets/Hindi.json';
-import Italian from './datasets/Italian.json';
-import Spanish from './datasets/Spanish.json';
+import Chinese from './datasets/Chinese';
+import Czech from './datasets/Czech';
+import Danish from './datasets/Danish';
+import Dutch from './datasets/Dutch';
+import English from './datasets/English';
+import French from './datasets/French';
+import German from './datasets/German';
+import Greek from './datasets/Greek';
+import Hindi from './datasets/Hindi';
+import Italian from './datasets/Italian';
+import Spanish from './datasets/Spanish';
 
 export const Languages: { [key: string]: string[] } = {
     Chinese,
@@ -49,7 +49,7 @@ export function languagesOfAWord(word: string) {
     return langs;
 }
 
-export function getLanguagesOfString(sentence: string) {
+export function getLanguagesOfString(sentence: string): { [lang: string]: number } {
     const langs = {};
     sentence.split(" ").forEach(word => {
         languagesOfAWord(word).forEach(lang => {
