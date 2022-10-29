@@ -1,3 +1,4 @@
+import { getLanguagesOfString } from "../Language/Language";
 import { DiscordJSONParser } from "../parser/DiscordJSONParser";
 import type { ParserResult } from "../parser/Parser";
 import { WhatsAppChatParser } from "../parser/WhatsAppChatParser";
@@ -250,6 +251,29 @@ export async function analyze(messages: WhatsAppMessage[]) {
 
   const words = extractByRegex(textMessages, r_words);
 
+  /**
+   * Language Analysis
+   */
+  postMessage(["StatusUpdate", "Analysing", "languages..."]);
+  let langs = {};
+  const senderLanguages = {};
+  const globalLanguages = {}
+  senderStatsArray.forEach(s => senderLanguages[s.sender] = {})
+  textMessages.forEach(txt => {
+    langs = getLanguagesOfString(txt.message);
+    Object.entries(langs).forEach(([lang, strength]: [string, number]) => {
+      senderLanguages[txt.sender][lang] = (senderLanguages[txt.sender][lang] ?? 0) + strength;
+      globalLanguages[lang] = (globalLanguages[lang] ?? 0) + strength;
+    })
+  });
+
+  // TODO: make senderLanguages relative
+
+  // Make the values relative
+  Object.entries(globalLanguages).forEach((([lang, strength]: [string, number]) => {
+    globalLanguages[lang] = strength / (averageSenderStats.totalWordCount - globalLanguages["unknown"] ?? 0);
+  }));
+
   return {
     sender,
     senderStats: senderStatsArray,
@@ -265,7 +289,9 @@ export async function analyze(messages: WhatsAppMessage[]) {
     emojiModifierBasedSenderStats: emojiBasedSenderStats(Array.from(sender), emojiModifiers, emojis),
     socialHandles,
     messageTypes,
-    words
+    words,
+    senderLanguages,
+    globalLanguages
   };
 }
 
