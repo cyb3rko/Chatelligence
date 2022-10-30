@@ -256,7 +256,7 @@ export async function analyze(messages: WhatsAppMessage[]) {
    */
   postMessage(["StatusUpdate", "Analysing", "languages..."]);
   let langs = {};
-  const senderLanguages = {};
+  const senderLanguages: { [sender: string]: { [lang: string]: number } } = {};
   const globalLanguages = {}
   senderStatsArray.forEach(s => senderLanguages[s.sender] = {})
   textMessages.forEach(txt => {
@@ -267,12 +267,18 @@ export async function analyze(messages: WhatsAppMessage[]) {
     })
   });
 
-  // TODO: make senderLanguages relative
-
   // Make the values relative
+  Object.entries(senderLanguages).forEach(([_sender, langs]) => {
+    let sum = Object.values(langs).reduce((p, c, i) => Object.keys(langs)[i] == "unknown" ? p : p + c);
+    Object.entries(langs).forEach(([lang, strength]) => {
+      langs[lang] = strength / sum;
+    });
+  });
+
   Object.entries(globalLanguages).forEach((([lang, strength]: [string, number]) => {
     globalLanguages[lang] = strength / (averageSenderStats.totalWordCount - globalLanguages["unknown"] ?? 0);
   }));
+
 
   return {
     sender,
