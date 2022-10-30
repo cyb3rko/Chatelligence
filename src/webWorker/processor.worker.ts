@@ -269,7 +269,7 @@ export async function analyze(messages: WhatsAppMessage[]) {
 
   // Make the values relative
   Object.entries(senderLanguages).forEach(([_sender, langs]) => {
-    let sum = Object.values(langs).reduce((p, c, i) => Object.keys(langs)[i] == "unknown" ? p : p + c);
+    let sum = Object.values(langs).reduce((p, c, i) => Object.keys(langs)[i] == "unknown" ? p : p + c, 0);
     Object.entries(langs).forEach(([lang, strength]) => {
       langs[lang] = strength / sum;
     });
