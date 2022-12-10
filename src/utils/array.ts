@@ -1,3 +1,6 @@
+import { Counter } from "./Counter";
+import type { Extraction } from "./processor.types";
+
 export function emptyArray<T>(length: number, fillValue?: T): T[] {
     return new Array(length).fill(fillValue);
 }
@@ -17,18 +20,18 @@ export function top<T>(what: Array<T>, count: number, offset: number, ofWhat: ke
     return sorted.slice(offset, count + offset);
 }
 
-export const NAME_OTHER = "other;"
+export const NAME_OTHER = "other";
 
 /**
  * @param what
  * @param untouchedCount Number of ungrouped entries
  * @param name This field will be renamed to ${NAME_OTHER} on the aggregated entry
  */
-export function aggregate<T>(what: Array<T>, untouchedCount: number, ofWhat: keyof T, name: keyof T, reversed: boolean, howToAggregate = (aggregation: T, entry: T) => { aggregation[ofWhat] += <any>entry[ofWhat] }) {
+export function aggregate<T extends Object>(what: Array<T>, untouchedCount: number, ofWhat: keyof T, name: keyof T, reversed: boolean, howToAggregate = (aggregation: T, entry: T) => { aggregation[ofWhat] += <any>entry[ofWhat] ?? 0 }) {
     const sorted = [...what].sort((a, b) => a[ofWhat] < b[ofWhat] ? 1 : -1);
     if (!reversed) sorted.reverse();
 
-    if (sorted.length < untouchedCount)
+    if (sorted.length < untouchedCount + 1)
         return sorted;
 
     const top = sorted.slice(0, untouchedCount);
@@ -40,4 +43,17 @@ export function aggregate<T>(what: Array<T>, untouchedCount: number, ofWhat: key
     top.push(aggregated);
 
     return top;
+}
+
+/**
+ * Counts and aggregates after a certain amount.
+ */
+export function count<T>(inp: T[], by: keyof T) {
+    let counter = new Counter<string>();
+
+    inp.forEach((m) => {
+        counter.increase(m[by as string], 1);
+    });
+
+    return counter;
 }
