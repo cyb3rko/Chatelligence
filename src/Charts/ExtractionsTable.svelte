@@ -1,15 +1,14 @@
 <script lang="ts">
     import {
-        Button,
         Col,
         Container,
         FormGroup,
-        Icon,
         Input,
         Label,
         Row,
         Table,
     } from "sveltestrap";
+    import ExtractionsTableActions from "../components/ExtractionsTableActions.svelte";
     import { top } from "../utils/array";
     import type { Extraction } from "../utils/processor.types";
 
@@ -60,8 +59,8 @@
             <thead>
                 <th>#</th>
                 <th>{title}</th>
-                <th>Mentions</th>
-                <th>See all</th>
+                <th>Messages</th>
+                <th>Actions</th>
             </thead>
             <tbody>
                 {#each display as ext, i}
@@ -74,10 +73,7 @@
                         <td>{ext.extracted}</td>
                         <td>{ext.mentions.length}</td>
                         <td>
-                            <Button color="info" disabled>
-                                <Icon name="pie-chart-fill" />
-                            </Button>
-                            <Button color="secondary" disabled>Mentions</Button>
+                            <ExtractionsTableActions extracton={ext} />
                         </td>
                     </tr>
                 {/each}
