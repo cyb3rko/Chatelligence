@@ -12,4 +12,10 @@ export class Counter<T> extends Map<T, number> {
     decrease(key: T, amount?: number) {
         this.increase(key, -(amount ?? 1));
     }
+
+    toObject() {
+        return Array.from(this.entries()).map((v) => {
+            return { key: v[0], count: v[1] }
+        });
+    }
 }
