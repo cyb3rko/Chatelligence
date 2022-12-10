@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Router, Route, navigate } from "svelte-routing";
+    import { Styles } from "sveltestrap";
     import ChatMessage from "./components/Message.svelte";
     import NumberTransition from "./components/NumberTransition.svelte";
     import { StoreAnalysis } from "./DataStore";
@@ -86,6 +87,7 @@
 </script>
 
 <main>
+    <Styles />
     <Router>
         <Route path="/">
             <h1>Index</h1>
