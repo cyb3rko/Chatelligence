@@ -143,6 +143,11 @@
     let simulation, context: CanvasRenderingContext2D;
     let dpi = 1;
     onMount(() => {
+        addEventListener("beforeprint", () => {
+            resize();
+            simulationUpdate();
+        });
+
         dpi = window.devicePixelRatio || 1;
         context = canvas.getContext("2d");
         resize();
