@@ -60,7 +60,7 @@
                 <th>#</th>
                 <th>{title}</th>
                 <th>Messages</th>
-                <th>Actions</th>
+                <th style="width: 150px;">Actions</th>
             </thead>
             <tbody>
                 {#each display as ext, i}
