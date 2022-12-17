@@ -269,13 +269,13 @@ export async function analyze(messages: WhatsAppMessage[]) {
 
   // Make the values relative
   Object.entries(senderLanguages).forEach(([_sender, langs]) => {
-    let sum = Object.values(langs).reduce((p, c, i) => Object.keys(langs)[i] == "unknown" ? p : p + c, 0);
+    let sum = Object.values(langs).reduce((p, c) => p + c, 0);
     Object.entries(langs).forEach(([lang, strength]) => {
       langs[lang] = strength / sum;
     });
   });
 
-  let globalLanguagesSum = Object.entries(globalLanguages).reduce((p, c, i) => c[0] == "unknown" ? p + c[1] : p, 0);
+  let globalLanguagesSum = Object.entries(globalLanguages).reduce((p, c) => p + c[1], 0);
   Object.entries(globalLanguages).forEach((([lang, strength]: [string, number]) => {
     globalLanguages[lang] = strength / globalLanguagesSum;
   }));
