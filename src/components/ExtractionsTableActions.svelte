@@ -36,18 +36,23 @@
             true,
         );
     }
+
+    let isOpenExtractions = false;
+    const toggleExtractions = () => {
+        isOpenExtractions = !isOpenExtractions;
+    };
 </script>
 
 <Container>
     <Col style="position: relative;" rows={2}>
         <Row>
             <Col xs="auto">
-                <Button color="info" disabled>
+                <Button color="info" on:click={toggleMentionsList}>
                     <Icon name="pie-chart-fill" />
                 </Button>
             </Col>
             <Col xs="auto">
-                <Button color="secondary" on:click={toggleMentionsList}
+                <Button color="secondary" on:click={toggleExtractions}
                     >List</Button
                 >
             </Col>
@@ -95,6 +100,32 @@
                         <th scope="row">{i + 1}</th>
                         <td>{m.key}</td>
                         <td>{m.count}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </Table>
+    </Modal>
+    <Modal
+        body
+        header={`All Mentions of '${extracton.extracted}'`}
+        isOpen={isOpenExtractions}
+        toggle={toggleExtractions}
+        size="xl"
+    >
+        <Table striped responsive>
+            <thead>
+                <th>#</th>
+                <th>Sender</th>
+                <th style="width:50%">Message</th>
+                <th width="50%">Time</th>
+            </thead>
+            <tbody>
+                {#each extracton.mentions as m, i}
+                    <tr>
+                        <th scope="row">{i + 1}</th>
+                        <td>{m.sender}</td>
+                        <td>{m.message}</td>
+                        <td>{m.time}</td>
                     </tr>
                 {/each}
             </tbody>
