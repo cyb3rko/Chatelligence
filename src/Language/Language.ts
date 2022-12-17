@@ -33,29 +33,31 @@ Object.entries(Languages).forEach((l, i) => {
     })
 });
 
-export function languagesOfAWord(word: string) {
+/**
+ * Remove duplicate words
+ */
+const intersectingWords = new Set();
+Object.entries(Languages).forEach((l) => { // Get Duplicates
+    Object.entries(Languages).forEach((l1,) => {
+        if (l[0] == l1[0])
+            return;
+
+        l[1].filter(w => l1[1].includes(w)).forEach(intersectingWord => intersectingWords.add(intersectingWord));
+    });
+});
+Object.entries(Languages).forEach((l, i) => { // Remove Duplicates
+    Languages[l[0]] = l[1].filter(w => !intersectingWords.has(w));
+});
+
+
+let languageOfAWordMemory = {};
+export function languageOfAWord(word: string) {
     word = word.toLowerCase();
 
-    let langs = [];
-    Object.entries(Languages).forEach(l => {
-        if (l[1].indexOf(word) != -1) {
-            langs.push(l[0]);
-        }
-    });
+    if (languageOfAWordMemory[word])
+        return languageOfAWordMemory[word];
 
-    if (langs.length == 0)
-        langs.push("unknown");
+    languageOfAWordMemory[word] = Object.entries(Languages).find(l => l[1].find(w => w == word) != undefined)?.[0] ?? "unknown"
 
-    return langs;
-}
-
-export function getLanguagesOfString(sentence: string): { [lang: string]: number } {
-    const langs = {};
-    sentence.split(" ").forEach(word => {
-        languagesOfAWord(word).forEach(lang => {
-            langs[lang] = (langs[lang] ?? 0) + 1
-        })
-    });
-
-    return langs;
+    return languageOfAWordMemory[word];
 }

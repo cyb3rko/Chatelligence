@@ -1,4 +1,4 @@
-import { getLanguagesOfString } from "../Language/Language";
+import { languageOfAWord } from "../Language/Language";
 import { DiscordJSONParser } from "../parser/DiscordJSONParser";
 import type { ParserResult } from "../parser/Parser";
 import { WhatsAppChatParser } from "../parser/WhatsAppChatParser";
@@ -255,16 +255,16 @@ export async function analyze(messages: WhatsAppMessage[]) {
    * Language Analysis
    */
   postMessage(["StatusUpdate", "Analysing", "languages..."]);
-  let langs = {};
+  let lang = "unknown";
   const senderLanguages: { [sender: string]: { [lang: string]: number } } = {};
-  const globalLanguages = {}
+  const globalLanguages: { [lang: string]: number } = {}
   senderStatsArray.forEach(s => senderLanguages[s.sender] = {})
   textMessages.forEach(txt => {
-    langs = getLanguagesOfString(txt.message);
-    Object.entries(langs).forEach(([lang, strength]: [string, number]) => {
-      senderLanguages[txt.sender][lang] = (senderLanguages[txt.sender][lang] ?? 0) + strength;
-      globalLanguages[lang] = (globalLanguages[lang] ?? 0) + strength;
-    })
+    txt.message.split(" ").forEach(word => {
+      lang = languageOfAWord(word);
+      senderLanguages[txt.sender][lang] = (senderLanguages[txt.sender][lang] ?? 0) + 1;
+      globalLanguages[lang] = (globalLanguages[lang] ?? 0) + 1;
+    });
   });
 
   // Make the values relative
@@ -275,8 +275,10 @@ export async function analyze(messages: WhatsAppMessage[]) {
     });
   });
 
+  let globalLanguagesSum = Object.entries(globalLanguages).reduce((p, c, i) => c[0] == "unknown" ? p + c[1] : p, 0);
   Object.entries(globalLanguages).forEach((([lang, strength]: [string, number]) => {
-    globalLanguages[lang] = strength / (averageSenderStats.totalWordCount - globalLanguages["unknown"] ?? 0);
+    globalLanguages[lang] = strength / globalLanguagesSum;
+    console.log(lang, strength, globalLanguagesSum);
   }));
 
 
