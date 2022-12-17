@@ -278,7 +278,6 @@ export async function analyze(messages: WhatsAppMessage[]) {
   let globalLanguagesSum = Object.entries(globalLanguages).reduce((p, c, i) => c[0] == "unknown" ? p + c[1] : p, 0);
   Object.entries(globalLanguages).forEach((([lang, strength]: [string, number]) => {
     globalLanguages[lang] = strength / globalLanguagesSum;
-    console.log(lang, strength, globalLanguagesSum);
   }));
 
 
