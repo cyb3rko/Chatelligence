@@ -8,7 +8,9 @@
         Row,
         Table,
     } from "sveltestrap";
+    import PiChart from "../Charts/PiChart.svelte";
     import { aggregate, count } from "../utils/array";
+    import { generateColorFromString } from "../utils/color";
     import type { Extraction } from "../utils/processor.types";
 
     let isOpenMentionsList = false;
@@ -58,6 +60,27 @@
         toggle={toggleMentionsList}
     >
         It appears in {extracton.mentions.length} messages.
+        <br />
+        <br />
+        <PiChart
+            data={{
+                labels: topMentions.map((r) => {
+                    return r.key;
+                }),
+                datasets: [
+                    {
+                        label: `'${extracton.extracted}' by sender`,
+                        data: topMentions.map((r) => {
+                            return r.count;
+                        }),
+                        backgroundColor: topMentions.map((r) => {
+                            return generateColorFromString(r.key);
+                        }),
+                        hoverOffset: 4,
+                    },
+                ],
+            }}
+        />
         <br />
         <br />
         <Table striped size="sm">
