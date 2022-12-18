@@ -15,3 +15,15 @@ export function generateColorFromString(input: string): string {
 
     return color;
 }
+
+/**
+ * Creates a more uniform colors.
+ * 
+ * @See generateColorFromString
+ */
+export function generateUiColorFromString(input: string): string {
+    if (input.toLocaleLowerCase() == "unknown")
+        return "#bbbbbb"
+
+    return generateColorFromString(input);
+}
