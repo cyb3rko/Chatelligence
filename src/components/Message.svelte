@@ -3,6 +3,7 @@
     import type { WhatsAppMessage } from "../types/WhatsAppMessage.type";
     import type { WhatsAppMessageType } from "../types/WhatsAppMessageType.enum";
     import MessageTypeIndicator from "./MessageTypeIndicator.svelte";
+    import PersonLink from "./PersonLink.svelte";
 
     export let message: WhatsAppMessage;
 
@@ -21,7 +22,12 @@
 
 <message>
     <MessageTypeIndicator {type} />
-    <sender class={sender ? "ok" : "empty"}>{sender ?? "⚠️ No sender."}</sender>
+    <sender class={sender ? "ok" : "empty"}
+        ><PersonLink
+            id={sender ?? "⚠️ No sender."}
+            disabled={sender == undefined}
+        /></sender
+    >
     <br />
     <content class={content ? "ok" : "empty"}
         >{content ?? "⚠️ No content."}</content

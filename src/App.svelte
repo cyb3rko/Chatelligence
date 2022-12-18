@@ -5,6 +5,7 @@
     import NumberTransition from "./components/NumberTransition.svelte";
     import { StoreAnalysis } from "./DataStore";
     import Evaluation from "./page/Evaluation.svelte";
+    import Person from "./page/Person.svelte";
     import type { WhatsAppMessage } from "./types/WhatsAppMessage.type";
     import { aggregate, top } from "./utils/array";
     import type { analyze, SenderStats } from "./webWorker/processor.worker";
@@ -96,28 +97,30 @@
             <h1>Hello</h1>
             <div>
                 {#if files && files[0]}
-                    <p>
-                        workerStatus: {workerStatus}
-                    </p>
-                    <p>
-                        os: {os}
-                    </p>
-                    <p>
-                        {files[0].name} (<NumberTransition
-                            value={Math.round(files[0].size / 1024)}
-                        />} kb |
-                        <NumberTransition value={messages.length} />
-                        messages)
-                    </p>
-                    <p>
-                        frist message (Skipped system message): <ChatMessage
-                            message={messages[1]}
-                        />
-                    </p>
-                    <div />
-                    {#if analysis}
-                        <Router>
-                            <Route path="/overview">
+                    <Router>
+                        <Route path="/person/:id" let:params>
+                            <Person {analysis} id={params.id} />
+                        </Route>
+                        <Route path="/overview">
+                            <p>
+                                workerStatus: {workerStatus}
+                            </p>
+                            <p>
+                                os: {os}
+                            </p>
+                            <p>
+                                {files[0].name} (<NumberTransition
+                                    value={Math.round(files[0].size / 1024)}
+                                />} kb |
+                                <NumberTransition value={messages.length} />
+                                messages)
+                            </p>
+                            <p>
+                                frist message (Skipped system message): <ChatMessage
+                                    message={messages[1]}
+                                />
+                            </p>
+                            {#if analysis}
                                 <Evaluation
                                     {analysis}
                                     {aggregatedSenderStats}
@@ -130,9 +133,9 @@
                                     })}
                                     participantsRelationReduced={analysis?.participantsRelationReduced}
                                 />
-                            </Route>
-                        </Router>
-                    {/if}
+                            {/if}
+                        </Route>
+                    </Router>
                 {:else}
                     <input type="file" bind:files accept="txt/json" />
                 {/if}
