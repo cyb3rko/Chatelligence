@@ -1,6 +1,19 @@
 <script lang="ts">
-    import { Router, Route, navigate } from "svelte-routing";
-    import { Styles } from "sveltestrap";
+    import { Link, navigate, Route, Router } from "svelte-routing";
+    import {
+        Collapse,
+        Dropdown,
+        DropdownItem,
+        DropdownMenu,
+        DropdownToggle,
+        Nav,
+        Navbar,
+        NavbarBrand,
+        NavbarToggler,
+        NavItem,
+        NavLink,
+        Styles,
+    } from "sveltestrap";
     import ChatMessage from "./components/Message.svelte";
     import NumberTransition from "./components/NumberTransition.svelte";
     import { StoreAnalysis } from "./DataStore";
@@ -85,11 +98,45 @@
               )
             : [];
     }
+
+    let isOpenNavbar = false;
 </script>
 
 <main>
     <Styles />
     <Router>
+        <Navbar color="light" light expand="md">
+            <NavbarBrand href="/app"
+                >{files?.[0]?.name ?? "ChatStat"}</NavbarBrand
+            >
+            <NavbarToggler on:click={() => (isOpenNavbar = !isOpenNavbar)} />
+            <Collapse isOpen={isOpenNavbar} navbar expand="md">
+                <Nav class="ms-auto" navbar>
+                    {#if analysis != undefined}
+                        <NavItem>
+                            <NavLink on:click={() => navigate("/app/overview/")}
+                                >Übersicht</NavLink
+                            >
+                        </NavItem>
+                        <Dropdown nav inNavbar>
+                            <DropdownToggle nav caret>Options</DropdownToggle>
+                            <DropdownMenu end>
+                                <DropdownItem
+                                    >//TODO: Adjust colors</DropdownItem
+                                >
+                                <DropdownItem divider />
+                                <DropdownItem
+                                    on:click={() => {
+                                        navigate("/app/");
+                                        location.reload();
+                                    }}>Reset</DropdownItem
+                                >
+                            </DropdownMenu>
+                        </Dropdown>
+                    {/if}
+                </Nav>
+            </Collapse>
+        </Navbar>
         <Route path="/">
             <h1>Index</h1>
         </Route>
