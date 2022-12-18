@@ -12,6 +12,7 @@
     import { aggregate, count } from "../utils/array";
     import { generateColorFromString } from "../utils/color";
     import type { Extraction } from "../utils/processor.types";
+    import PersonLink from "./PersonLink.svelte";
 
     let isOpenMentionsList = false;
     const toggleMentionsList = () => {
@@ -98,7 +99,7 @@
                 {#each topMentions as m, i}
                     <tr>
                         <th scope="row">{i + 1}</th>
-                        <td>{m.key}</td>
+                        <td><PersonLink id={m.key} /></td>
                         <td>{m.count}</td>
                     </tr>
                 {/each}
@@ -123,7 +124,7 @@
                 {#each extracton.mentions as m, i}
                     <tr>
                         <th scope="row">{i + 1}</th>
-                        <td>{m.sender}</td>
+                        <td><PersonLink id={m.sender} /></td>
                         <td>{m.message}</td>
                         <td>{m.time}</td>
                     </tr>
