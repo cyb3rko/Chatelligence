@@ -1,17 +1,30 @@
 <script lang="ts">
+    import { color } from "d3";
     import { Link, navigate, Route, Router } from "svelte-routing";
     import {
+        Alert,
+        Button,
+        Card,
+        CardBody,
+        CardHeader,
+        CardSubtitle,
+        CardTitle,
         Collapse,
+        Container,
         Dropdown,
         DropdownItem,
         DropdownMenu,
         DropdownToggle,
+        Input,
+        ListGroup,
+        ListGroupItem,
         Nav,
         Navbar,
         NavbarBrand,
         NavbarToggler,
         NavItem,
         NavLink,
+        Spinner,
         Styles,
     } from "sveltestrap";
     import ChatMessage from "./components/Message.svelte";
@@ -34,6 +47,7 @@
 
     const worker = new Worker("/build/processor.worker.js");
     let workerStatus;
+    let workerError;
 
     worker.onmessage = (m) => {
         console.log(m.data);
@@ -55,6 +69,11 @@
 
             case "os":
                 os = m.data[1];
+                break;
+
+            case "error":
+                workerStatus = "error";
+                workerError = m.data[1];
                 break;
 
             default:
@@ -105,7 +124,7 @@
 <main>
     <Styles />
     <Router>
-        <Navbar color="light" light expand="md">
+        <Navbar color="dark" dark expand="md">
             <NavbarBrand href="/app"
                 >{files?.[0]?.name ?? "ChatStat"}</NavbarBrand
             >
@@ -114,8 +133,9 @@
                 <Nav class="ms-auto" navbar>
                     {#if analysis != undefined}
                         <NavItem>
-                            <NavLink on:click={() => navigate("/app/overview/")}
-                                >Übersicht</NavLink
+                            <NavLink
+                                on:click={() => navigate("/app/overview/")}
+                                color="danger">Übersicht</NavLink
                             >
                         </NavItem>
                         <Dropdown nav inNavbar>
@@ -137,57 +157,113 @@
                 </Nav>
             </Collapse>
         </Navbar>
-        <Route path="/">
-            <h1>Index</h1>
-        </Route>
-        <Route path="/app/*">
-            <h1>Hello</h1>
-            <div>
-                {#if files && files[0]}
-                    <Router>
-                        <Route path="/person/:id" let:params>
-                            <Person {analysis} id={params.id} />
-                        </Route>
-                        <Route path="/overview">
-                            <p>
-                                workerStatus: {workerStatus}
-                            </p>
-                            <p>
-                                os: {os}
-                            </p>
-                            <p>
-                                {files[0].name} (<NumberTransition
-                                    value={Math.round(files[0].size / 1024)}
-                                />} kb |
-                                <NumberTransition value={messages.length} />
-                                messages)
-                            </p>
-                            <p>
-                                frist message (Skipped system message): <ChatMessage
-                                    message={messages[1]}
+        <Container style="padding-top: 2rem;">
+            <Route path="/">
+                <h1>Index</h1>
+            </Route>
+            <Route path="/app/*">
+                <div>
+                    {#if files && files[0]}
+                        <Router>
+                            <Route path="/person/:id" let:params>
+                                <Person {analysis} id={params.id} />
+                            </Route>
+                            <Route path="/overview">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>System</CardTitle>
+                                    </CardHeader>
+                                    <CardBody>
+                                        <ListGroup>
+                                            <ListGroupItem
+                                                color={workerStatus == "Done"
+                                                    ? "success"
+                                                    : workerStatus == "error"
+                                                    ? "danger"
+                                                    : "light"}
+                                            >
+                                                {#if workerStatus != "Done" && workerStatus != "error"}
+                                                    <Spinner
+                                                        color="info"
+                                                        size="sm"
+                                                    />
+                                                {/if}
+                                                Worker-Status: {workerStatus}
+                                            </ListGroupItem>
+                                            <ListGroupItem
+                                                color={os != undefined
+                                                    ? "success"
+                                                    : "light"}
+                                            >
+                                                os: {os}
+                                            </ListGroupItem>
+                                            <ListGroupItem
+                                                color={files?.[0].size !=
+                                                undefined
+                                                    ? "success"
+                                                    : "light"}
+                                            >
+                                                Filesize: {Math.round(
+                                                    files[0].size / 1024,
+                                                )}kb
+                                            </ListGroupItem>
+                                        </ListGroup>
+                                    </CardBody>
+                                </Card>
+
+                                {#if workerStatus == "error"}
+                                    <br />
+                                    <Alert color="danger">
+                                        <h4
+                                            class="alert-heading text-capitalize"
+                                        >
+                                            Worker error
+                                        </h4>
+                                        <Button
+                                            color="primary"
+                                            on:click={() => location.reload()}
+                                            >Try again</Button
+                                        >
+                                        <br />
+                                        <br />
+
+                                        {workerError}
+                                    </Alert>
+                                {/if}
+
+                                {#if analysis}
+                                    <Evaluation
+                                        {analysis}
+                                        {aggregatedSenderStats}
+                                        {topMessanger}
+                                        emojsCounts={analysis.emojis.map(
+                                            (e) => {
+                                                return {
+                                                    label: e.extracted,
+                                                    value: e.mentions.length,
+                                                };
+                                            },
+                                        )}
+                                        participantsRelationReduced={analysis?.participantsRelationReduced}
+                                    />
+                                {/if}
+                            </Route>
+                        </Router>
+                    {:else}
+                        <Card>
+                            <CardBody>
+                                <h1>Upload</h1>
+                                <Input
+                                    type="file"
+                                    bind:files
+                                    accept="txt/json"
                                 />
-                            </p>
-                            {#if analysis}
-                                <Evaluation
-                                    {analysis}
-                                    {aggregatedSenderStats}
-                                    {topMessanger}
-                                    emojsCounts={analysis.emojis.map((e) => {
-                                        return {
-                                            label: e.extracted,
-                                            value: e.mentions.length,
-                                        };
-                                    })}
-                                    participantsRelationReduced={analysis?.participantsRelationReduced}
-                                />
-                            {/if}
-                        </Route>
-                    </Router>
-                {:else}
-                    <input type="file" bind:files accept="txt/json" />
-                {/if}
-            </div>
-        </Route>
+                            </CardBody>
+                        </Card>
+                    {/if}
+                </div>
+            </Route>
+        </Container>
     </Router>
 </main>
 
@@ -200,6 +276,6 @@
         --messageFontColor: #fdfdfd;
         --messageFont: Helvetica;
         --messageDateFontColor: #a2a2aa;
-        --noData: red;
+        --noData: #dc3545;
     }
 </style>

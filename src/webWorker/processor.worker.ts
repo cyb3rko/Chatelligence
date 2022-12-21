@@ -74,6 +74,8 @@ onmessage = (m) => {
       postMessage(["StatusUpdate", "Done"]);
       postMessage(["Analysis", result]);
       console.log(result);
+    }).catch(err => {
+      postMessage(["error", err]);
     });
 }
 
