@@ -230,6 +230,7 @@
                                 {#if analysis}
                                     <br /><br />
                                     <Evaluation
+                                        messageCount={messages.length}
                                         {analysis}
                                         {aggregatedSenderStats}
                                         {topMessanger}
@@ -262,6 +263,8 @@
             </Route>
         </Container>
     </Router>
+
+    <br /><br />
 </main>
 
 <style>
