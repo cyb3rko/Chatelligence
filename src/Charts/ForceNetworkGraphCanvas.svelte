@@ -355,6 +355,6 @@
         top: 1%;
         left: 1%;
         width: unset;
-        color: #000;
+        color: #fff;
     }
 </style>

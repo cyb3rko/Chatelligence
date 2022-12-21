@@ -1,13 +1,11 @@
 <script lang="ts">
-    import { color } from "d3";
-    import { Link, navigate, Route, Router } from "svelte-routing";
+    import { navigate, Route, Router } from "svelte-routing";
     import {
         Alert,
         Button,
         Card,
         CardBody,
         CardHeader,
-        CardSubtitle,
         CardTitle,
         Collapse,
         Container,
@@ -27,8 +25,6 @@
         Spinner,
         Styles,
     } from "sveltestrap";
-    import ChatMessage from "./components/Message.svelte";
-    import NumberTransition from "./components/NumberTransition.svelte";
     import { StoreAnalysis } from "./DataStore";
     import Evaluation from "./page/Evaluation.svelte";
     import Person from "./page/Person.svelte";
@@ -232,6 +228,7 @@
                                 {/if}
 
                                 {#if analysis}
+                                    <br /><br />
                                     <Evaluation
                                         {analysis}
                                         {aggregatedSenderStats}

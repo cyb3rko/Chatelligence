@@ -24,6 +24,8 @@
             type: "bar",
             data: data,
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         display: showLegend,
@@ -52,6 +54,8 @@
 </barChart>
 
 <style>
-    main {
+    barChart {
+        position: relative;
+        width: 100%;
     }
 </style>
