@@ -193,6 +193,7 @@ export async function analyze(messages: WhatsAppMessage[]) {
   /**
    * Relation of participants
    */
+  postMessage(["StatusUpdate", "Analysing", "relation of participants..."]);
   /**
    * key: source.target
    * value: value of the relation
@@ -227,7 +228,7 @@ export async function analyze(messages: WhatsAppMessage[]) {
       return { source, target, value, _value: value };
     }).filter((l) => l.source != l.target),
   };
-
+  postMessage(["StatusUpdate", "Reducing", "relation of participants..."]);
   const participantsRelationReduced = {
     nodes: participantsRelation.nodes,
     links: participantsRelation.links.map(l => {
@@ -241,7 +242,7 @@ export async function analyze(messages: WhatsAppMessage[]) {
   /**
    * MessageTypes
    */
-
+  postMessage(["StatusUpdate", "Analysing", "message types..."]);
   const messageTypes = new Map<string, number>();
   messages.forEach(m => {
     messageTypes.set(m.type, (messageTypes.get(m.type) ?? 0) + 1);
@@ -250,7 +251,7 @@ export async function analyze(messages: WhatsAppMessage[]) {
   /**
    * Words
    */
-
+  postMessage(["StatusUpdate", "Analysing", "words..."]);
   const words = extractByRegex(textMessages, r_words);
 
   /**
