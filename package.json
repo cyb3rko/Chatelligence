@@ -8,7 +8,7 @@
     "dev:worker": "rollup -w -c rollup.config.worker.js",
     "start": "sirv public --no-clear --single",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "test:watch": "jest src/ --watch"
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
