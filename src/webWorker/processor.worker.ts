@@ -34,7 +34,7 @@ const r_emojiMale = /👴/ug;
  */
 const r_emojiFemale = /👵/ug;
 const r_socialHandles = /(^|\s)@(?=[a-zA-Z]+)[a-zA-Z0-9\.\#]+|(^|\s)[a-zA-Z0-9\-]+#\d+/g;
-const r_words = /\w+/g;
+const r_words = /(?:[\p{L}'’]+(?![\u{1F000}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]))/gu;
 
 export type Analysis = Awaited<ReturnType<typeof analyze>>;
 export type SenderStats = Analysis["senderStats"];
