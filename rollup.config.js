@@ -30,7 +30,7 @@ function serve() {
 	};
 }
 
-export default {
+export default [{
 	input: 'src/main.ts',
 	output: {
 		sourcemap: true,
@@ -79,4 +79,23 @@ export default {
 	watch: {
 		clearScreen: false
 	}
-};
+},
+{
+    input: `./src/webWorker/processor.worker.ts`,
+    output: {
+        sourcemap: true,
+        format: 'iife',
+        name: 'worker',
+        file: 'public/build/processor.worker.js'
+    },
+    plugins: [
+        resolve({
+            browser: true
+        }),
+        commonjs(),
+        typescript({
+            sourceMap: !production,
+            inlineSources: !production
+        }),
+    ]
+}];
