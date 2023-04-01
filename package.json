@@ -5,7 +5,6 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "dev:worker": "rollup -w -c rollup.config.worker.js",
     "start": "sirv public --no-clear --single",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "jest",
